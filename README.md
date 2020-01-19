@@ -1,44 +1,25 @@
 # ov-movies
 
-FIXME: description
+Simple application to crawl the website of my local theatre and send me updates about OV films.
 
-## Installation
+## How it works
 
-Download from http://example.com/FIXME.
+Once a day the application will scrape the website.
+It will then persist any entries that were not previously scraped in a database and notify me via email about these new entries.
+The application also has a web interface to search for upcoming ov screenings.
 
-## Usage
+## Database
 
-FIXME: explanation
+Postgres with hugsql and migratus.
 
-    $ java -jar ov-movies-0.1.0-standalone.jar [args]
+### Development
 
-## Options
+`docker-compose up -d` for testing.
 
-FIXME: listing of options this app accepts.
+### Migrations
 
-## Examples
+`lein migratus create`
 
-...
+`lein migratus migrate`
 
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2020 FIXME
-
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
-
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+`lein migratus rollback`

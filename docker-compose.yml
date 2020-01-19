@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ov_movies
+    ports:
+      - '5432:5432'
