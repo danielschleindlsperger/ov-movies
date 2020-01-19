@@ -1,10 +1,12 @@
 (ns ov-movies.core
   (:gen-class)
-  (:require [ov-movies.parse :as parse]))
+  (:require [ov-movies.scrape :as scrape]))
+
+;; (scrape/movies-with-original-screenings)
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (pprint (parse/movies-with-original-screenings)))
+  (println "Hello"))
 
 (-main)

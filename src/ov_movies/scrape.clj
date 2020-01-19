@@ -1,4 +1,4 @@
-(ns ov-movies.parse
+(ns ov-movies.scrape
   (:require
     [clojure.string :as str]
     [hickory.core :as h]
@@ -58,16 +58,16 @@
   (< 0 (count (:original-dates film))))
 
 ;; for testing
-(def url "/film/bad-boys-for-life/267153/neufahrn/#vorstellungen")
-(def detail-html (fetch-detail-page url))
-(def shows (find-show detail-html))
-(def originals (filter original? shows))
-(count originals)
-(showtime (first originals))
-(first originals)
-(has-originals? (parse-film detail-html))
-(title detail-html)
-(poster-image detail-html)
+;(def url "/film/bad-boys-for-life/267153/neufahrn/#vorstellungen")
+;(def detail-html (fetch-detail-page url))
+;(def shows (find-show detail-html))
+;(def originals (filter original? shows))
+;(count originals)
+;(showtime (first originals))
+;(first originals)
+;(has-originals? (parse-film detail-html))
+;(title detail-html)
+;(poster-image detail-html)
 ;; endtesting
 
 (defn movies-with-original-screenings []
