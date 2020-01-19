@@ -70,5 +70,9 @@
 ;(poster-image detail-html)
 ;; endtesting
 
+;;; TODO:
+;; Returns all unique movies with the cineplex id extracted
+;; Return found screenings with cineplex id extracted
+
 (defn movies-with-original-screenings []
   (filter has-originals? (map (comp parse-film fetch-detail-page) (detail-urls))))

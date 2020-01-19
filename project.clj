@@ -5,11 +5,13 @@
             :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.postgresql/postgresql "42.2.2"]
+                 [com.layerware/hugsql "0.5.1"]
                  [migratus "1.2.7"]
                  [hickory "0.7.1"]]
-  :main ^:skip-aot ov-movies.core
+  :main nil
   :target-path "target/%s"
-  :profiles {:uberjar {:aot :all}}
+  :profiles {:crawler {:main ov_movies.crawler}
+             :uberjar {:aot :all}}
   :plugins [[migratus-lein "0.7.2"]]
   :migratus {:store :database
              :migration-dir "migrations"
