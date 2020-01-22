@@ -7,25 +7,38 @@
 (def base-url "https://www.cineplex.de")
 (def overview-url (str base-url "/programm/neufahrn/"))
 
-(defn fetch-html [url] (h/as-hickory (h/parse (slurp url))))
+;;;
+;;; Overview page: Parse the overview page and returning links to the detail pages.
+
+(defn html->hickory
+  "Converts an HTML string to a hickory data structure."
+  [s]
+  (-> s h/parse h/as-hickory))
 
 (defn get-more-links [hickory-html]
   (s/select (s/class "schedule__grid-item--more") hickory-html))
 
 (defn detail-urls
-  "Crawls the overview page and returns relative urls to all movie detail pages in the page."
-  []
-  (let [html (fetch-html overview-url)
-        links (get-more-links html)]
+  "Parses the overview pages HTML and returns relative urls to all movie detail pages in the page."
+  [html]
+  (let [links (-> html html->hickory get-more-links)]
     (map #(-> % :attrs :href) links)))
 
-(defn fetch-detail-page [rel-url] (fetch-html (str base-url rel-url)))
+;;;
+;;; Detail page: Load and parse a detail page and retrieve all screening of the movie.
 
-(defn title [detail-page]
-  (-> (s/select (s/tag :h1) detail-page)
-      first :content first str/trim))
+(defn fetch-detail-page [rel-url] (slurp (str base-url rel-url)))
 
-(defn poster-image [detail-page]
+(defn title
+  "Parses a movies title from a detail pages hickory HTML."
+  [detail-page]
+  (let [s (-> (s/select (s/tag :h1) detail-page)
+               first :content first)]
+    (when (some? s) (str/trim s))))
+
+(defn poster-image
+  "Parse a movies poster image url from a detail pages hickory HTML."
+  [detail-page]
   (-> (s/select (s/descendant (s/class "movie-poster") (s/tag :img)) detail-page)
       first :attrs :src))
 
@@ -38,24 +51,37 @@
   (-> (s/select (s/descendant (s/find-in-text #"Original")) show)
       count (not= 0)))
 
-(defn showtime [show]
-  "Takes a showtime schedule link and parses the showtime."
+(defn screening [show]
+  "Takes a showtime schedule link and parses the :date and :id."
   (let [time-el (first (s/select (s/tag :time) show))
         date (-> time-el :attrs :datetime)
-        time (-> time-el :content first (str/replace #":" "-") )]
-    (str date "-" time)))
+        time (-> time-el :content first (str/replace #":" "-"))
+        url (-> show :attrs :href)]
+    {:date (str date "-" time)
+     :id (parse-screening-id url)}))
 
-(defn parse-film
-  "Takes the HTML of a film page and returns a parsed film with :title :poster and a vector of :original-dates"
-  [detail-html]
-  {:title (title detail-html)
-   :poster (poster-image detail-html)
-   :original-dates  (map showtime (filter original? (find-show detail-html)))})
+(defn parse-movie
+  "Takes the HTML of a movie page and returns a parsed movie with :title :poster and a vector of :original-dates"
+  [html]
+  (let [hick-html (html->hickory html)]
+    {:title          (title hick-html)
+     :poster         (poster-image hick-html)
+     :original-dates (map screening (filter original? (find-show hick-html)))}))
+
+(defn parse-movie-id
+  "Takes a URL to a movie detail page and extracts the cineplex id from it."
+  [url]
+  (when url (last (re-find #"film/.*/(\d+)/" url))))
+
+(defn parse-screening-id
+  "Takes a URL to a booking page of a screening and extracts the cineplex id from it."
+  [url]
+  (when url (last (re-find #"performance/(.*)/mode/sale" url))))
 
 (defn has-originals?
-  "Determine if a parsed film has original shows."
-  [film]
-  (< 0 (count (:original-dates film))))
+  "Determine if a parsed movie has original shows."
+  [movie]
+  (< 0 (count (:original-dates movie))))
 
 ;; for testing
 ;(def url "/film/bad-boys-for-life/267153/neufahrn/#vorstellungen")
@@ -65,14 +91,12 @@
 ;(count originals)
 ;(showtime (first originals))
 ;(first originals)
-;(has-originals? (parse-film detail-html))
+;(has-originals? (parse-movie detail-html))
 ;(title detail-html)
 ;(poster-image detail-html)
 ;; endtesting
 
-;;; TODO:
-;; Returns all unique movies with the cineplex id extracted
-;; Return found screenings with cineplex id extracted
 
 (defn movies-with-original-screenings []
-  (filter has-originals? (map (comp parse-film fetch-detail-page) (detail-urls))))
+  (let [html (slurp overview-url)]
+    (filter has-originals? (map (comp parse-movie fetch-detail-page) (detail-urls html)))))

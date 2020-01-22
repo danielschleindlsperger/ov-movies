@@ -3,7 +3,7 @@
             [ov_movies.util :refer :all])
   (:import [java.time ZoneId LocalDateTime]))
 
-(deftest parsing
+(deftest test-parse-date
   (testing "parses date string with central european timezone"
     (let [parsed (parse-date "2020-01-01-20-00")
           paris-offset (-> (LocalDateTime/now)
