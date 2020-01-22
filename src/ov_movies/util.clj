@@ -2,7 +2,7 @@
   (:import [java.time ZonedDateTime ZoneId]
            [java.time.format DateTimeFormatter]))
 
-(def central-europe (ZoneId/of"Europe/Paris"))
+(def central-europe (ZoneId/of "Europe/Paris"))
 
 (defn parse-date
   "Parses a date in the format YYYY-MM-dd-HH-mm to a java `OffsetDateTime`"
