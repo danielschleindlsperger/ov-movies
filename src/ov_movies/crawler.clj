@@ -1,6 +1,7 @@
 (ns ov_movies.crawler
   (:require
     [ov_movies.util :as u]
+    [ov-movies.scrape :as scrape]
     [ov_movies.db.movies :as movies]
     [ov_movies.db.screenings :as screenings]))
 
@@ -10,26 +11,21 @@
    :user        "root"
    :password    "root"})
 
-(defn make-film [] {:id (str (rand-int 1000000))
-                    :name (rand-nth ["Die Hard" "The Great Gatsby"])
-                    :poster-url nil})
+(defn screening-tuple [{id       :id
+                        movie-id :movie-id
+                        date     :date}] (vec [id movie-id date]))
 
-(movies/insert-movie db die-hard)
-
-(def films (map vals [(make-film) (make-film)]))
-
-(defn make-screening [] {:id (str (rand-int 1000000))
-                         :movie_id "lalal"
-                         :date (u/parse-date "2020-01-01-20-00")})
-
-(movies/insert-movies db {:movies films})
-
-(def ss (screenings/insert-screenings db {:screenings (map vals [(make-screening) (make-screening)])}))
-
-(str (:date (first ss)))
+(defn movie-tuple [{id :id
+                   title :title
+                    poster-url :poster-url}] (vec [id title poster-url]))
 
 ;;; TODO
-;; - crawl websites
-;; - upsert into database, getting inserted back
 ;; - notification with newly inserted entries
-(defn -main [] (println "crawling..."))
+(defn -main []
+  (println "crawling...")
+  (let [{movies     :movies
+         screenings :screenings} (scrape/scrape!)
+        inserted-movies (movies/insert-movies db {:movies (map movie-tuple movies)})
+        inserted-screenings (screenings/insert-screenings db {:screenings (map screening-tuple screenings)})]
+    (println "inserted" (count inserted-movies) "new movies")
+    (println "inserted" (count inserted-screenings) "new screenings")))

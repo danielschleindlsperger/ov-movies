@@ -34,7 +34,8 @@
 
 (deftest test-parse-movie
   (let [html (slurp (resource "test/bad-boys-for-life.html"))
-        expected {:title "Bad Boys for Life"
+        expected {:id "267153"
+                  :title "Bad Boys for Life"
                   :poster "https://cdn.cineplex.de/_imageserver/340f267153.jpg"
                   :original-dates [{:date "2020-01-22-21-55" :id "E1DE9000023AIYWYCE"}
                                    {:date "2020-01-23-22-10" :id "EDFE9000023AIYWYCE"}
@@ -47,7 +48,8 @@
     (testing "parses the movie from html"
       (is (= expected (scrape/parse-movie html))))
     (testing "does not explode with bad input"
-      (is (= {:title nil
+      (is (= {:id nil
+              :title nil
               :poster nil
               :original-dates []} (scrape/parse-movie ""))))))
 
@@ -79,3 +81,19 @@
 
     (testing "nil"
       (is (= false (scrape/has-originals? nil))))))
+
+(deftest test-normalize-scraped
+  (let [parsed [{:id "267153"
+                 :title "Bad Boys for Life"
+                 :poster "poster.url"
+                 :original-dates [{:date "2020-01-22-21-55" :id "E1DE9000023AIYWYCE"}]}]]
+    (testing "normalizes"
+      (is (= {:movies [{:id "267153"
+                        :title "Bad Boys for Life"
+                        :poster "poster.url"}]
+              :screenings [{:id "E1DE9000023AIYWYCE"
+                            :date (ov_movies.util/parse-date "2020-01-22-21-55")
+                            :movie-id "267153"}]} (scrape/normalize-scraped parsed))))
+    (testing "does not explode on empty input"
+      (is (= {:movies []
+              :screenings []} (scrape/normalize-scraped []))))))

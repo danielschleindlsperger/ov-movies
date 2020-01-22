@@ -2,7 +2,8 @@
   (:require
     [clojure.string :as str]
     [hickory.core :as h]
-    [hickory.select :as s]))
+    [hickory.select :as s]
+    [ov_movies.util :as u]))
 
 (def base-url "https://www.cineplex.de")
 (def overview-url (str base-url "/programm/neufahrn/"))
@@ -29,12 +30,27 @@
 
 (defn fetch-detail-page [rel-url] (slurp (str base-url rel-url)))
 
+(defn parse-movie-id
+  "Takes a URL to a movie detail page and extracts the cineplex id from it."
+  [url]
+  (when url (last (re-find #"film/.*/(\d+)/" url))))
+
+(defn parse-screening-id
+  "Takes a URL to a booking page of a screening and extracts the cineplex id from it."
+  [url]
+  (when url (last (re-find #"performance/(.*)/mode/sale" url))))
+
 (defn title
   "Parses a movies title from a detail pages hickory HTML."
   [detail-page]
   (let [s (-> (s/select (s/tag :h1) detail-page)
                first :content first)]
     (when (some? s) (str/trim s))))
+
+(defn id-from-canonical
+  "Takes HTML and returns the movie id parsed from the canonical url."
+  [hick]
+  (-> (s/select (s/attr "rel" #(= % "canonical")) hick) first :attrs :href parse-movie-id))
 
 (defn poster-image
   "Parse a movies poster image url from a detail pages hickory HTML."
@@ -64,19 +80,10 @@
   "Takes the HTML of a movie page and returns a parsed movie with :title :poster and a vector of :original-dates"
   [html]
   (let [hick-html (html->hickory html)]
-    {:title          (title hick-html)
+    {:id (id-from-canonical hick-html)
+     :title          (title hick-html)
      :poster         (poster-image hick-html)
      :original-dates (map screening (filter original? (find-show hick-html)))}))
-
-(defn parse-movie-id
-  "Takes a URL to a movie detail page and extracts the cineplex id from it."
-  [url]
-  (when url (last (re-find #"film/.*/(\d+)/" url))))
-
-(defn parse-screening-id
-  "Takes a URL to a booking page of a screening and extracts the cineplex id from it."
-  [url]
-  (when url (last (re-find #"performance/(.*)/mode/sale" url))))
 
 (defn has-originals?
   "Determine if a parsed movie has original shows."
@@ -96,7 +103,22 @@
 ;(poster-image detail-html)
 ;; endtesting
 
+(defn normalize-movie [movie]
+  (let [dates (:original-dates movie)]
+    (map #(-> %
+              (assoc :movie-id (:id movie))
+              (update :date u/parse-date)) dates)))
+
+(defn normalize-scraped
+  "Takes a list of parsed movies and returns a map of
+  :movies (with their dates parsed) and
+  :screenings (with :movie-id)"
+  [xs]
+  {:movies (map #(dissoc % :original-dates) xs)
+   :screenings (flatten (map normalize-movie xs))})
 
 (defn movies-with-original-screenings []
   (let [html (slurp overview-url)]
     (filter has-originals? (map (comp parse-movie fetch-detail-page) (detail-urls html)))))
+
+(defn scrape! [] (normalize-scraped (movies-with-original-screenings)))
