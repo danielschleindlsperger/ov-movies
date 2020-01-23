@@ -16,7 +16,7 @@
                         date     :date}] (vec [id movie-id date]))
 
 (defn movie-tuple [{id :id
-                   title :title
+                    title :title
                     poster-url :poster-url}] (vec [id title poster-url]))
 
 ;;; TODO
