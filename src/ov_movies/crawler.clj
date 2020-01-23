@@ -20,7 +20,7 @@
                     poster-url :poster-url}] (vec [id title poster-url]))
 
 ;;; TODO
-;; - notification with newly inserted entries
+;; - notification (https://pushover.net/) with newly inserted entries
 (defn -main []
   (println "crawling...")
   (let [{movies     :movies
