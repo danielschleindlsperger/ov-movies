@@ -3,7 +3,8 @@
     [ov_movies.util :as u]
     [ov-movies.scrape :as scrape]
     [ov_movies.db.movies :as movies]
-    [ov_movies.db.screenings :as screenings]))
+    [ov_movies.db.screenings :as screenings]
+    [uswitch.lambada.core :refer [deflambdafn]]))
 
 (def db
   {:subprotocol "postgres"
@@ -21,11 +22,14 @@
 
 ;;; TODO
 ;; - notification (https://pushover.net/) with newly inserted entries
-(defn -main []
+
+;; Method described here works as well: https://bernhardwenzel.com/articles/using-clojure-with-aws-lambda/#requesthandler-clojure-version
+(deflambdafn ov_movies.crawler
+  [in out ctx]
   (println "crawling...")
   (let [{movies     :movies
-         screenings :screenings} (scrape/scrape!)
-        inserted-movies (movies/insert-movies db {:movies (map movie-tuple movies)})
-        inserted-screenings (screenings/insert-screenings db {:screenings (map screening-tuple screenings)})]
-    (println "inserted" (count inserted-movies) "new movies")
-    (println "inserted" (count inserted-screenings) "new screenings")))
+        screenings :screenings} (scrape/scrape!)
+       inserted-movies (movies/insert-movies db {:movies (map movie-tuple movies)})
+       inserted-screenings (screenings/insert-screenings db {:screenings (map screening-tuple screenings)})]
+   (println "inserted" (count inserted-movies) "new movies")
+   (println "inserted" (count inserted-screenings) "new screenings")))

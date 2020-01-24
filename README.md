@@ -39,3 +39,19 @@ Postgres with hugsql and migratus.
 `lein migratus migrate`
 
 `lein migratus rollback`
+
+## Infrastructure and Deployment
+
+Build with `lein with-profile crawler uberjar`
+
+### Deploy Infrastructure 
+
+```bash
+npm install
+
+npx cdk synth # emits the synthesized CloudFormation template
+npx cdk diff # compare deployed stack with current state
+
+# actual deploy
+npx cdk deploy # deploy this stack to your default AWS account/region
+```
