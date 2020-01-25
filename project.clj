@@ -8,16 +8,15 @@
                  [com.layerware/hugsql "0.5.1"]
                  [migratus "1.2.7"]
                  [hickory "0.7.1"]
-                 [uswitch/lambada "0.1.2"]]
+                 [uswitch/lambada "0.1.2"]
+                 [com.cognitect.aws/api "0.8.423"]
+                 [com.cognitect.aws/endpoints "1.1.11.710"]
+                 [com.cognitect.aws/secretsmanager "770.2.568.0"]]
   :target-path "target/%s"
-  :profiles {:crawler {:main ov_movies.crawler
+  :profiles {:crawler {:main         ov_movies.crawler
                        :uberjar-name "crawler.jar"
-                       :aot :all}}
+                       :aot          :all}}
   :plugins [[migratus-lein "0.7.2"]]
-  :migratus {:store :database
+  :migratus {:store         :database
              :migration-dir "migrations"
-             :db {:classname "com.mysql.jdbc.Driver"
-                  :subprotocol "postgres"
-                  :subname "//localhost/ov_movies"
-                  :user "root"
-                  :password "root"}})
+             :db            (or (System/getenv "DATABASE_URL") "jdbc:postgres://root:root@localhost:5432/ov_movies")})
