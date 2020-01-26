@@ -13,7 +13,7 @@
 
 (defn movie-tuple [{id         :id
                     title      :title
-                    poster-url :poster-url}] (vec [id title poster-url]))
+                    poster :poster}] (vec [id title poster]))
 
 (defn crawl []
   (let [{movies     :movies
