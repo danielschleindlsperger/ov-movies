@@ -11,7 +11,8 @@
                  [uswitch/lambada "0.1.2"]
                  [com.cognitect.aws/api "0.8.423"]
                  [com.cognitect.aws/endpoints "1.1.11.710"]
-                 [com.cognitect.aws/secretsmanager "770.2.568.0"]]
+                 [com.cognitect.aws/secretsmanager "770.2.568.0"]
+                 [clj-http "3.10.0"]]
   :target-path "target/%s"
   :profiles {:crawler {:main         ov_movies.crawler
                        :uberjar-name "crawler.jar"

@@ -19,3 +19,6 @@
   "Takes an AWS Secrets Manager Secret ARN and returns its SecretString or nil if it isn't defined."
   (:SecretString (aws/invoke secretsmanager {:op :GetSecretValue :request {:SecretId secret-id}})))
 
+(defn find-first
+  [f coll]
+  (first (filter f coll)))

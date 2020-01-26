@@ -1,4 +1,4 @@
-(ns ov-movies.scrape
+(ns ov_movies.scrape
   (:require
     [clojure.string :as str]
     [hickory.core :as h]
