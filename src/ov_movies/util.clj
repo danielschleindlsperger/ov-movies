@@ -1,6 +1,7 @@
 (ns ov_movies.util
   (:import [java.time ZonedDateTime ZoneId]
-           [java.time.format DateTimeFormatter]))
+           [java.time.format DateTimeFormatter])
+  (:require [cognitect.aws.client.api :as aws]))
 
 (def central-europe (ZoneId/of "Europe/Paris"))
 
@@ -10,3 +11,11 @@
   (let [format (.withZone (DateTimeFormatter/ofPattern "uuuu-MM-dd-HH-mm") central-europe)
         zoned-date (ZonedDateTime/parse s format)]
     (.toOffsetDateTime zoned-date)))
+
+(def secretsmanager (aws/client {:api :secretsmanager}))
+(aws/validate-requests secretsmanager true)
+(defn fetch-sm-secret
+  [secret-id]
+  "Takes an AWS Secrets Manager Secret ARN and returns its SecretString or nil if it isn't defined."
+  (:SecretString (aws/invoke secretsmanager {:op :GetSecretValue :request {:SecretId secret-id}})))
+
