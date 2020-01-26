@@ -28,17 +28,18 @@
   (join "\n" (map (fn [movie]
                     (str (:title movie) ": " (join ", " (map :date (:screenings movie))))) movies-with-screenings)))
 
+(format-message [{:title "huiiboo" :screenings [{:date "2020-10-10"} {:date "2020-10-10"}]}
+                 {:title "another one!" :screenings [{:date "2020-10-10"} {:date "2020-10-10"}]}])
+
 (defn notify! [new-screenings movies]
-  (let [should-send (< 0 (count new-screenings))
-        movies (screenings-for-movies new-screenings movies)
-        message (format-message movies)
+  (let [should-send? (< 0 (count new-screenings))
+        movies-with-screenings (screenings-for-movies new-screenings movies)
+        message (format-message movies-with-screenings)
         params {:token   api-token
                 :user    user-key
                 :title   "New OV movies!"
                 :message message
                 ;; URL hardcoded until we build a custom page
                 :url     "https://www.cineplex.de/filmreihe/original/548/neufahrn/"}]
-    (when should-send (client/post endpoint
-                                   {:body         (json/write-str params)
-                                    :content-type :json
-                                    :accept       :json}))))
+    (when should-send? (client/post endpoint {:form-params params
+                                              :accept      :json}))))
