@@ -19,7 +19,14 @@ export class Stack extends cdk.Stack {
 
     const databaseConnection = new sm.Secret(this, 'database-connection')
     databaseConnection.grantRead(crawlerHandler)
-
     crawlerHandler.addEnvironment('DATABASE_URL_SECRET_ID', databaseConnection.secretArn)
+
+    const pushoverUserKey = new sm.Secret(this, 'pushover-user-key')
+    pushoverUserKey.grantRead(crawlerHandler)
+    crawlerHandler.addEnvironment('PUSHOVER_USER_KEY_SECRET_ID', pushoverUserKey.secretArn)
+
+    const pushoverApiKey = new sm.Secret(this, 'pushover-api-key')
+    pushoverApiKey.grantRead(crawlerHandler)
+    crawlerHandler.addEnvironment('PUSHOVER_API_KEY_SECRET_ID', pushoverApiKey.secretArn)
   }
 }
