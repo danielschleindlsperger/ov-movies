@@ -69,3 +69,11 @@ npx cdk diff # compare deployed stack with current state
 # actual deploy
 npx cdk deploy # deploy this stack to your default AWS account/region
 ```
+
+## Roadmap (TODOs)
+
+- Crawl twice a week 
+- Send notification with new entries after scraping
+- Include original German movies as well
+- Allow blacklisting of movies
+- HTML page with filterable results
