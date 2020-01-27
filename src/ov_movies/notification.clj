@@ -20,16 +20,14 @@
 
 (defn screenings-for-movies [screenings movies]
   (let [all-movies (map (fn [movie]
-                          (let [xs (filter (fn [s] (= (:movie-id s) (:id movie))) screenings)]
+                          (let [xs (filter (fn [s]
+                                             (= (:movie_id s) (:id movie))) screenings)]
                             (assoc movie :screenings xs))) movies)]
     (filter (fn [movie] (< 0 (count (:screenings movie)))) all-movies)))
 
 (defn format-message [movies-with-screenings]
   (join "\n" (map (fn [movie]
                     (str (:title movie) ": " (join ", " (map :date (:screenings movie))))) movies-with-screenings)))
-
-(format-message [{:title "huiiboo" :screenings [{:date "2020-10-10"} {:date "2020-10-10"}]}
-                 {:title "another one!" :screenings [{:date "2020-10-10"} {:date "2020-10-10"}]}])
 
 (defn notify! [new-screenings movies]
   (let [should-send? (< 0 (count new-screenings))

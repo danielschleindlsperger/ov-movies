@@ -8,7 +8,7 @@
     [uswitch.lambada.core :refer [deflambdafn]]))
 
 (defn screening-tuple [{id       :id
-                        movie-id :movie-id
+                        movie-id :movie_id
                         date     :date}] (vec [id movie-id date]))
 
 (defn movie-tuple [{id     :id

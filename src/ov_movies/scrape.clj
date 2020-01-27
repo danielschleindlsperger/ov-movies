@@ -106,13 +106,13 @@
 (defn normalize-movie [movie]
   (let [dates (:original-dates movie)]
     (map #(-> %
-              (assoc :movie-id (:id movie))
+              (assoc :movie_id (:id movie))
               (update :date u/parse-date)) dates)))
 
 (defn normalize-scraped
   "Takes a list of parsed movies and returns a map of
   :movies (with their dates parsed) and
-  :screenings (with :movie-id)"
+  :screenings (with :movie_id)"
   [xs]
   {:movies (map #(dissoc % :original-dates) xs)
    :screenings (flatten (map normalize-movie xs))})
