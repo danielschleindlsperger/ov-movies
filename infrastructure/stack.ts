@@ -1,32 +1,40 @@
-import * as cdk from '@aws-cdk/core';
-import * as lambda from '@aws-cdk/aws-lambda'
-import * as sm from '@aws-cdk/aws-secretsmanager'
+import * as CDK from '@aws-cdk/core';
+import * as Lambda from '@aws-cdk/aws-lambda'
+import * as SM from '@aws-cdk/aws-secretsmanager'
+import * as Events from '@aws-cdk/aws-events'
+import * as Targets from '@aws-cdk/aws-events-targets'
 import { resolve } from 'path'
 
 const uberjarDir = resolve(__dirname, '../target/uberjar')
 
-export class Stack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+export class Stack extends CDK.Stack {
+    constructor(scope: CDK.Construct, id: string, props?: CDK.StackProps) {
+        super(scope, id, props);
 
-    const crawlerHandler = new lambda.Function(this, 'crawler', {
-      runtime: lambda.Runtime.JAVA_8,
-      code: lambda.Code.fromAsset(resolve(uberjarDir, 'crawler.jar')),
-      handler: 'ov_movies.crawler',
-      timeout: cdk.Duration.seconds(60),
-      memorySize: 1024
-    })
+        const crawlerHandler = new Lambda.Function(this, 'crawler', {
+            runtime: Lambda.Runtime.JAVA_8,
+            code: Lambda.Code.fromAsset(resolve(uberjarDir, 'crawler.jar')),
+            handler: 'ov_movies.crawler',
+            timeout: CDK.Duration.seconds(60),
+            memorySize: 1024
+        })
 
-    const databaseConnection = new sm.Secret(this, 'database-connection')
-    databaseConnection.grantRead(crawlerHandler)
-    crawlerHandler.addEnvironment('DATABASE_URL_SECRET_ID', databaseConnection.secretArn)
+        new Events.Rule(this, 'ov-movies-crawler-schedule', {
+            // At 16:00 on Sunday and Wednesday.
+            schedule: Events.Schedule.expression('cron(0 16 ? * SUN,WED *)'),
+            targets: [new Targets.LambdaFunction(crawlerHandler)]
+        })
 
-    const pushoverUserKey = new sm.Secret(this, 'pushover-user-key')
-    pushoverUserKey.grantRead(crawlerHandler)
-    crawlerHandler.addEnvironment('PUSHOVER_USER_KEY_SECRET_ID', pushoverUserKey.secretArn)
+        const databaseConnection = new SM.Secret(this, 'database-connection')
+        databaseConnection.grantRead(crawlerHandler)
+        crawlerHandler.addEnvironment('DATABASE_URL_SECRET_ID', databaseConnection.secretArn)
 
-    const pushoverApiKey = new sm.Secret(this, 'pushover-api-key')
-    pushoverApiKey.grantRead(crawlerHandler)
-    crawlerHandler.addEnvironment('PUSHOVER_API_KEY_SECRET_ID', pushoverApiKey.secretArn)
-  }
+        const pushoverUserKey = new SM.Secret(this, 'pushover-user-key')
+        pushoverUserKey.grantRead(crawlerHandler)
+        crawlerHandler.addEnvironment('PUSHOVER_USER_KEY_SECRET_ID', pushoverUserKey.secretArn)
+
+        const pushoverApiKey = new SM.Secret(this, 'pushover-api-key')
+        pushoverApiKey.grantRead(crawlerHandler)
+        crawlerHandler.addEnvironment('PUSHOVER_API_KEY_SECRET_ID', pushoverApiKey.secretArn)
+    }
 }
