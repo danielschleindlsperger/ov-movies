@@ -43,9 +43,10 @@
 (defn title
   "Parses a movies title from a detail pages hickory HTML."
   [detail-page]
-  (let [s (-> (s/select (s/tag :h1) detail-page)
-               first :content first)]
-    (when (some? s) (str/trim s))))
+  (let [h1 (-> (s/select (s/tag :h1) detail-page) first)
+        text (filter string? (:content h1))
+        title (str/join (map str/trim text))]
+    (if (str/blank? title) nil title)))
 
 (defn id-from-canonical
   "Takes HTML and returns the movie id parsed from the canonical url."
