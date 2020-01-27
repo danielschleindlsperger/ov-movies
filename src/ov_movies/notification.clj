@@ -1,7 +1,7 @@
 (ns ov_movies.notification
   (:require [ov_movies.util :refer [fetch-sm-secret find-first]]
+            [ov_movies.config :refer [cfg]]
             [clojure.string :refer [join]]
-            [clojure.data.json :as json]
             [clj-http.client :as client]))
 
 ;; POST to this
@@ -10,12 +10,12 @@
 
 (def api-token
   "API token that identifies this application with Pushover."
-  (let [secret-id (System/getenv "PUSHOVER_API_KEY_SECRET_ID")]
+  (let [secret-id (:pushover-api-key-secret-id cfg)]
     (fetch-sm-secret secret-id)))
 
 (def user-key
   "Pushover user key to identify which user to send notifications to."
-  (let [secret-id (System/getenv "PUSHOVER_USER_KEY_SECRET_ID")]
+  (let [secret-id (:pushover-user-key-secret-id cfg)]
     (fetch-sm-secret secret-id)))
 
 (defn screenings-for-movies [screenings movies]

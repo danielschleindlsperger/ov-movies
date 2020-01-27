@@ -11,8 +11,8 @@
                         movie-id :movie-id
                         date     :date}] (vec [id movie-id date]))
 
-(defn movie-tuple [{id         :id
-                    title      :title
+(defn movie-tuple [{id     :id
+                    title  :title
                     poster :poster}] (vec [id title poster]))
 
 (defn crawl []
