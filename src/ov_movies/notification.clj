@@ -25,6 +25,7 @@
                             (assoc movie :screenings xs))) movies)]
     (filter (fn [movie] (< 0 (count (:screenings movie)))) all-movies)))
 
+;;; TODO: format date "Tue, 23rd Jan, 23:00"
 (defn format-message [movies-with-screenings]
   (join "\n" (map (fn [movie]
                     (str (:title movie) ": " (join ", " (map :date (:screenings movie))))) movies-with-screenings)))
@@ -35,7 +36,7 @@
         message (format-message movies-with-screenings)
         params {:token   api-token
                 :user    user-key
-                :title   "New OV movies!"
+                :title   "New OV screenings!"
                 :message message
                 ;; URL hardcoded until we build a custom page
                 :url     "https://www.cineplex.de/filmreihe/original/548/neufahrn/"}]

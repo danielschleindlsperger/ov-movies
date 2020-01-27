@@ -22,11 +22,8 @@
         inserted-screenings (screenings/insert-screenings db-conn {:screenings (map screening-tuple screenings)})]
     (println "inserted" (count inserted-movies) "new movies")
     (println "inserted" (count inserted-screenings) "new screenings")
-    (println "sending notifications")
+    (println "sending notifications...")
     (notify! inserted-screenings movies)))
-
-;;; TODO
-;; - notification (https://pushover.net/) with newly inserted entries
 
 ;; Method described here works as well: https://bernhardwenzel.com/articles/using-clojure-with-aws-lambda/#requesthandler-clojure-version
 (deflambdafn ov_movies.crawler
