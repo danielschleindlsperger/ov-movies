@@ -120,6 +120,6 @@
 
 (defn movies-with-original-screenings []
   (let [html (slurp overview-url)]
-    (filter has-originals? (map (comp parse-movie fetch-detail-page) (detail-urls html)))))
+    (filter has-originals? (pmap (comp parse-movie fetch-detail-page) (detail-urls html)))))
 
 (defn scrape! [] (normalize-scraped (movies-with-original-screenings)))
