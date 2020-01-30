@@ -1,9 +1,14 @@
 (ns ov_movies.scrape
   (:require
+    [ov_movies.movie :as movie]
+    [clojure.spec.alpha :as s]
+    [clojure.spec.gen.alpha :as gen]
     [clojure.string :as str]
-    [hickory.core :as h]
-    [hickory.select :as s]
+    [hickory.core :refer [parse, as-hickory]]
+    [hickory.select :as sel]
     [ov_movies.util :as u]))
+
+(s/conform ::movie/movie {::movie/id "123456"})
 
 (def base-url "https://www.cineplex.de")
 (def overview-url (str base-url "/programm/neufahrn/"))
@@ -14,10 +19,10 @@
 (defn html->hickory
   "Converts an HTML string to a hickory data structure."
   [s]
-  (-> s h/parse h/as-hickory))
+  (-> s parse as-hickory))
 
 (defn get-more-links [hickory-html]
-  (s/select (s/class "schedule__grid-item--more") hickory-html))
+  (sel/select (sel/class "schedule__grid-item--more") hickory-html))
 
 (defn detail-urls
   "Parses the overview pages HTML and returns relative urls to all movie detail pages in the page."
@@ -43,7 +48,7 @@
 (defn title
   "Parses a movies title from a detail pages hickory HTML."
   [detail-page]
-  (let [h1 (-> (s/select (s/tag :h1) detail-page) first)
+  (let [h1 (-> (sel/select (sel/tag :h1) detail-page) first)
         text (filter string? (:content h1))
         title (str/join (map str/trim text))]
     (if (str/blank? title) nil title)))
@@ -51,26 +56,26 @@
 (defn id-from-canonical
   "Takes HTML and returns the movie id parsed from the canonical url."
   [hick]
-  (-> (s/select (s/attr "rel" #(= % "canonical")) hick) first :attrs :href parse-movie-id))
+  (-> (sel/select (sel/attr "rel" #(= % "canonical")) hick) first :attrs :href parse-movie-id))
 
 (defn poster-image
   "Parse a movies poster image url from a detail pages hickory HTML."
   [detail-page]
-  (-> (s/select (s/descendant (s/class "movie-poster") (s/tag :img)) detail-page)
+  (-> (sel/select (sel/descendant (sel/class "movie-poster") (sel/tag :img)) detail-page)
       first :attrs :src))
 
 (defn find-show [page-html]
-  (s/select (s/child (s/class "performance-holder") (s/class "schedule__grid-item")) page-html))
+  (sel/select (sel/child (sel/class "performance-holder") (sel/class "schedule__grid-item")) page-html))
 
 (defn original?
   "Determines if the given show is to an original showing."
   [show]
-  (-> (s/select (s/descendant (s/find-in-text #"Original")) show)
+  (-> (sel/select (sel/descendant (sel/find-in-text #"Original")) show)
       count (not= 0)))
 
 (defn screening [show]
   "Takes a showtime schedule link and parses the :date and :id."
-  (let [time-el (first (s/select (s/tag :time) show))
+  (let [time-el (first (sel/select (sel/tag :time) show))
         date (-> time-el :attrs :datetime)
         time (-> time-el :content first (str/replace #":" "-"))
         url (-> show :attrs :href)]
