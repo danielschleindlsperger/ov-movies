@@ -1,8 +1,9 @@
 (ns ov_movies.notification
   (:require [ov_movies.util :refer [fetch-sm-secret find-first]]
+            [ov_movies.db.db :as db]
             [ov_movies.config :refer [cfg]]
-            [clojure.string :refer [join]]
-            [clj-http.client :as client]))
+            [clj-http.client :as client]
+            [clojure.string :as str]))
 
 ;; POST to this
 ;; https://pushover.net/api
@@ -18,26 +19,31 @@
   (let [secret-id (:pushover-user-key-secret-id cfg)]
     (fetch-sm-secret secret-id)))
 
-(defn screenings-for-movies [screenings movies]
-  (let [all-movies (map (fn [movie]
-                          (let [xs (filter (fn [s]
-                                             (= (:movie_id s) (:id movie))) screenings)]
-                            (assoc movie :screenings xs))) movies)]
-    (filter (fn [movie] (< 0 (count (:screenings movie)))) all-movies)))
+(defn group-by-movie [screenings]
+  (reduce-kv (fn [movies movie screenings]
+               (conj movies (assoc movie :screenings (map #(dissoc % :movie) screenings))))
+             []
+             (group-by :movie screenings)))
+
+(defn format-screenings [screenings] (str/join "\n" (map (fn [s] (str (:date s))) (sort-by :date screenings))))
 
 ;;; TODO: format date "Tue, 23rd Jan, 23:00"
 (defn format-message [movies-with-screenings]
-  (join "\n" (map (fn [movie]
-                    (str (:title movie) ": " (join ", " (map :date (:screenings movie))))) movies-with-screenings)))
+  (str/join "\n\n" (map (fn [movie]
+                          (let [screenings (format-screenings (:screenings movie))]
+                            (str/join "\n" [(str "<b>" (:title movie) ":</b>")
+                                            screenings
+                                            "<a href=\"http://example.com/\">BLACKLIST MOVIE</a>"]))) movies-with-screenings)))
 
-(defn notify! [new-screenings movies]
-  (let [should-send? (< 0 (count new-screenings))
-        movies-with-screenings (screenings-for-movies new-screenings movies)
+(defn notify! [upcoming-screenings]
+  (let [should-send? (< 0 (count upcoming-screenings))
+        movies-with-screenings (group-by-movie upcoming-screenings)
         message (format-message movies-with-screenings)
         params {:token   api-token
                 :user    user-key
-                :title   "New OV screenings!"
+                :title   "Originale!"
                 :message message
+                :html    1
                 ;; URL hardcoded until we build a custom page
                 :url     "https://www.cineplex.de/filmreihe/original/548/neufahrn/"}]
     (when should-send? (client/post endpoint {:form-params params

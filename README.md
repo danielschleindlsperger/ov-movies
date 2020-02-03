@@ -4,9 +4,8 @@ Simple application to crawl the website of my local theatre and send me updates 
 
 ## How it works
 
-Once a day the application will scrape the website.
+The application will scrape the Cineplex website in an interval (a few days).
 It will then persist any entries that were not previously scraped in a database and notify me via email about these new entries.
-The application also has a web interface to search for upcoming ov screenings.
 
 ## Helpful Commands
 
@@ -44,7 +43,9 @@ Postgres with hugsql and migratus.
 
 ### Production
 
-I'm currently using a free database on [elephantsql.com/](https://www.elephantsql.com/). The connection string is stored in AWS Secrets Manager. The ARN is injected to the Lambda functions as an environment variable `DATABASE_URL_SECRET_ID`.
+I'm currently using a free database on [elephantsql.com/](https://www.elephantsql.com/).
+The connection string is stored in AWS Secrets Manager.
+The ARN is injected to the Lambda functions as an environment variable `DATABASE_URL_SECRET_ID`.
 
 ### Migrations
 
@@ -74,4 +75,4 @@ npx cdk deploy # deploy this stack to your default AWS account/region
 
 - Include original German movies as well
 - Allow blacklisting of movies
-- HTML page with filterable results
+- HTML page with filterable results (Optional)

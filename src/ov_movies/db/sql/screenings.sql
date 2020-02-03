@@ -14,3 +14,13 @@ INSERT INTO screenings (id, movie_id, date)
 VALUES :t*:screenings
 ON CONFLICT (id) DO NOTHING
 RETURNING *;
+
+-- A :result value of :n below will return affected rows:
+-- :name get-upcoming-screenings :? :*
+-- :doc Get all screenings
+SELECT s.id AS id, s.date AS date, m.id AS movie_id, m.title AS movie_title, m.poster AS movie_poster
+FROM screenings s
+         LEFT OUTER JOIN movies m
+                         ON s.movie_id = m.id
+WHERE s.date > NOW()
+ORDER BY s.date DESC;
