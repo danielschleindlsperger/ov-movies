@@ -12,10 +12,17 @@ export class Stack extends CDK.Stack {
     constructor(scope: CDK.Construct, id: string, props?: CDK.StackProps) {
         super(scope, id, props);
 
-        const { url } = api(this)
-        const { crawlerHandler } = crawler(this)
+        const databaseConnection = new SM.Secret(this, 'database-connection')
+
+        const {url, apiHandler} = api(this)
+        const {crawlerHandler} = crawler(this)
 
         crawlerHandler.addEnvironment('API_URL', url)
+
+        databaseConnection.grantRead(crawlerHandler)
+        databaseConnection.grantRead(apiHandler)
+        crawlerHandler.addEnvironment('DATABASE_URL_SECRET_ID', databaseConnection.secretArn)
+        apiHandler.addEnvironment('DATABASE_URL_SECRET_ID', databaseConnection.secretArn)
     }
 }
 
@@ -34,9 +41,6 @@ function crawler(scope: CDK.Construct) {
         targets: [new Targets.LambdaFunction(crawlerHandler)]
     })
 
-    const databaseConnection = new SM.Secret(scope, 'database-connection')
-    databaseConnection.grantRead(crawlerHandler)
-    crawlerHandler.addEnvironment('DATABASE_URL_SECRET_ID', databaseConnection.secretArn)
 
     const pushoverUserKey = new SM.Secret(scope, 'pushover-user-key')
     pushoverUserKey.grantRead(crawlerHandler)
@@ -46,7 +50,7 @@ function crawler(scope: CDK.Construct) {
     pushoverApiKey.grantRead(crawlerHandler)
     crawlerHandler.addEnvironment('PUSHOVER_API_KEY_SECRET_ID', pushoverApiKey.secretArn)
 
-    return { crawlerHandler }
+    return {crawlerHandler}
 }
 
 function api(scope: CDK.Construct) {
@@ -64,6 +68,7 @@ function api(scope: CDK.Construct) {
     })
 
     return {
-        url: lambdaApi.url
+        url: lambdaApi.url,
+        apiHandler: handler,
     }
 }

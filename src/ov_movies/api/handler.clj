@@ -18,8 +18,8 @@
 
 (deflambdafn ov_movies.api.handler
              [in out ctx]
-             (let [body (-> in io/reader (json/read :key-fn keyword))
-                   response {:statusCode 200 :body "hello world!" :headers {}}]
-               (println body)
+             (let [req (-> in io/reader (json/read :key-fn keyword))
+                   response (handle req)]
+               (println req)
                (with-open [w (io/writer out)]
                  (json/write response w))))
