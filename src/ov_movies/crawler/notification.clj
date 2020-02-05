@@ -33,13 +33,14 @@
 
 (defn format-message [movies-with-screenings]
   (str/join "\n\n" (map (fn [movie]
-                          (let [screenings (format-screenings (:screenings movie))]
+                          (let [screenings (format-screenings (:screenings movie))
+                                link (format "<a href=\"%s/blacklist/%s\">IGNORE</a>" (:api-url cfg) (:id movie))]
                             (str/join "\n" [(str "<b>" (:title movie) ":</b>")
                                             screenings
-                                            "<a href=\"http://example.com/\">BLACKLIST MOVIE</a>"]))) movies-with-screenings)))
+                                            link]))) movies-with-screenings)))
 
 (defn notify! [upcoming-screenings]
-  (let [should-send? false #_(< 0 (count upcoming-screenings))
+  (let [should-send? (< 0 (count upcoming-screenings))
         movies-with-screenings (group-by-movie upcoming-screenings)
         message (format-message movies-with-screenings)
         params {:token   api-token
@@ -49,10 +50,5 @@
                 :html    1
                 ;; URL hardcoded until we build a custom page
                 :url     "https://www.cineplex.de/filmreihe/original/548/neufahrn/"}]
-    (println params)
     (when should-send? (client/post endpoint {:form-params params
                                               :accept      :json}))))
-
-(def screenings (db/upcoming-screenings))
-
-(notify! screenings)

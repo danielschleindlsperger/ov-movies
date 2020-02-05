@@ -22,5 +22,5 @@ SELECT s.id AS id, s.date AS date, m.id AS movie_id, m.title AS movie_title, m.p
 FROM screenings s
          LEFT OUTER JOIN movies m
                          ON s.movie_id = m.id
-WHERE s.date > NOW()
+WHERE s.date > NOW() AND m.blacklisted = false
 ORDER BY s.date DESC;

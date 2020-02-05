@@ -10,7 +10,8 @@
     "infrastructure": "bin/infrastructure.js"
   },
   "scripts": {
-    "build": "lein with-profile crawler uberjar",
+    "prebuild": "lein clean",
+    "build": "lein with-profile crawler:api uberjar",
     "deploy": "cdk deploy"
   },
   "repository": {
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/danielschleindlsperger/ov-movies#readme",
   "devDependencies": {
+    "@aws-cdk/aws-apigateway": "^1.22.0",
     "@aws-cdk/aws-events": "^1.22.0",
     "@aws-cdk/aws-events-targets": "^1.22.0",
     "@aws-cdk/aws-lambda": "^1.22.0",

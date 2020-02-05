@@ -31,7 +31,13 @@ Invokable with `lein with-profiles crawler run`
 
 ### Web App
 
-**TODO**
+AWS APIGateway (LambdaRestApi) with a single Clojure (JVM) handler.
+
+#### Enpoints
+
+##### `/blacklist/$movie-id`
+
+Hides a movie from future notifications.
 
 ## Database
 
@@ -57,7 +63,7 @@ The ARN is injected to the Lambda functions as an environment variable `DATABASE
 
 ## Infrastructure and Deployment
 
-Build with `lein with-profile crawler uberjar`
+Build with `npm run build`
 
 ### Deploy Infrastructure 
 
@@ -74,5 +80,4 @@ npx cdk deploy # deploy this stack to your default AWS account/region
 ## Roadmap (TODOs)
 
 - Include original German movies as well
-- Allow blacklisting of movies
 - HTML page with filterable results (Optional)

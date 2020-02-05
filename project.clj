@@ -5,6 +5,7 @@
             :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [org.clojure/test.check "0.9.0"]           ;; This should actually be a "dev" dependency
+                 [org.clojure/data.json "0.2.7"]
                  [org.postgresql/postgresql "42.2.2"]
                  [com.layerware/hugsql "0.5.1"]
                  [migratus "1.2.7"]
@@ -15,9 +16,15 @@
                  [com.cognitect.aws/secretsmanager "770.2.568.0"]
                  [clj-http "3.10.0"]]
   :target-path "target/%s"
-  :profiles {:crawler {:main         ov_movies.crawler.crawler
-                       :uberjar-name "crawler.jar"
-                       :aot          :all}}
+  :profiles {:crawler {:main          ov_movies.crawler.crawler
+                       :uberjar-name  "crawler.jar"
+                       :aot           :all
+                       :clean-targets [:compile-path]}
+             :api     {:main          ov_movies.api.handler
+                       :uberjar-name  "api.jar"
+                       :aot           :all
+                       :clean-targets [:compile-path]}}
+  ;; Don't clean target folder since we build multiple jars in series
   :plugins [[migratus-lein "0.7.2"]]
   :migratus {:store         :database
              :migration-dir "migrations"
