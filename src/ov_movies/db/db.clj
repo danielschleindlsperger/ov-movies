@@ -1,7 +1,10 @@
 (ns ov_movies.db.db
   (:require [ov_movies.util :refer [fetch-sm-secret]]
             [ov_movies.db.screenings :as screenings]
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  (:import
+    [java.time OffsetDateTime Instant ZoneId]
+    [java.sql Timestamp]))
 
 (def local-connection {:subprotocol "postgres"
                        :subname     "//localhost/ov_movies"
@@ -32,4 +35,11 @@
                sub-map (remove-key-prefix (select-keys s relation-keys) relation)]
            (assoc (select-keys s own-keys) (keyword relation) sub-map))) xs))
 
-(defn upcoming-screenings [] (normalize-relations (screenings/get-upcoming-screenings db-conn) "movie"))
+(defn sqltimestamp->offsetdatetime [^Timestamp timestamp]
+  (let [instant (Instant/ofEpochMilli (.getTime timestamp))]
+    (OffsetDateTime/ofInstant instant (ZoneId/of "Europe/Berlin"))))
+
+(defn convert-dates [screenings]
+  (map #(update % :date sqltimestamp->offsetdatetime) screenings))
+
+(defn upcoming-screenings [] (convert-dates (normalize-relations (screenings/get-upcoming-screenings db-conn) "movie")))
