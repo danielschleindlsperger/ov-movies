@@ -81,3 +81,4 @@ npx cdk deploy # deploy this stack to your default AWS account/region
 
 - Include original German movies as well
 - HTML page with filterable results (Optional)
+    - Pushover Notifications have a maximum length so we could just render it out as html and shorten the notification
