@@ -1,4 +1,4 @@
-(ns ov_movies.scrape
+(ns ov_movies.crawler.scrape
   (:require
     [ov_movies.movie :as movie]
     [clojure.spec.alpha :as s]

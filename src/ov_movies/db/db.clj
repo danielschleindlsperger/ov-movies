@@ -1,6 +1,7 @@
 (ns ov_movies.db.db
   (:require [ov_movies.util :refer [fetch-sm-secret]]
             [ov_movies.db.screenings :as screenings]
+            [ov_movies.config :refer [cfg]]
             [clojure.string :as str])
   (:import
     [java.time OffsetDateTime Instant ZoneId]
@@ -37,7 +38,7 @@
 
 (defn sqltimestamp->offsetdatetime [^Timestamp timestamp]
   (let [instant (Instant/ofEpochMilli (.getTime timestamp))]
-    (OffsetDateTime/ofInstant instant (ZoneId/of "Europe/Berlin"))))
+    (OffsetDateTime/ofInstant instant (:timezone cfg))))
 
 (defn convert-dates [screenings]
   (map #(update % :date sqltimestamp->offsetdatetime) screenings))

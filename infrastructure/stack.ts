@@ -14,7 +14,7 @@ export class Stack extends CDK.Stack {
         const crawlerHandler = new Lambda.Function(this, 'crawler', {
             runtime: Lambda.Runtime.JAVA_8,
             code: Lambda.Code.fromAsset(resolve(uberjarDir, 'crawler.jar')),
-            handler: 'ov_movies.crawler',
+            handler: 'ov_movies.crawler.handler',
             timeout: CDK.Duration.seconds(60),
             memorySize: 1024
         })

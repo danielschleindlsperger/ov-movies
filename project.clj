@@ -15,7 +15,7 @@
                  [com.cognitect.aws/secretsmanager "770.2.568.0"]
                  [clj-http "3.10.0"]]
   :target-path "target/%s"
-  :profiles {:crawler {:main         ov_movies.crawler
+  :profiles {:crawler {:main         ov_movies.crawler.crawler
                        :uberjar-name "crawler.jar"
                        :aot          :all}}
   :plugins [[migratus-lein "0.7.2"]]

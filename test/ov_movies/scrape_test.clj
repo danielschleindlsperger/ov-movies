@@ -1,7 +1,7 @@
 (ns ov-movies.scrape-test
   (:require [clojure.test :refer :all]
             [clojure.java.io :refer [resource]]
-            [ov_movies.scrape :refer :all]))
+            [ov_movies.crawler.scrape :refer :all]))
 
 (deftest test-detail-urls
   (let [html (slurp (resource "test/cineplex-overview.html"))

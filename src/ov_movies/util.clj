@@ -1,14 +1,13 @@
 (ns ov_movies.util
   (:import [java.time ZonedDateTime ZoneId]
            [java.time.format DateTimeFormatter])
-  (:require [cognitect.aws.client.api :as aws]))
-
-(def central-europe (ZoneId/of "Europe/Paris"))
+  (:require [cognitect.aws.client.api :as aws]
+            [ov_movies.config :refer [cfg]]))
 
 (defn parse-date
   "Parses a date in the format YYYY-MM-dd-HH-mm to a java `OffsetDateTime`"
   [s]
-  (let [format (.withZone (DateTimeFormatter/ofPattern "uuuu-MM-dd-HH-mm") central-europe)
+  (let [format (.withZone (DateTimeFormatter/ofPattern "uuuu-MM-dd-HH-mm") (:timezone cfg))
         zoned-date (ZonedDateTime/parse s format)]
     (.toOffsetDateTime zoned-date)))
 

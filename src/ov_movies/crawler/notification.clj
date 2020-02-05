@@ -1,4 +1,4 @@
-(ns ov_movies.notification
+(ns ov_movies.crawler.notification
   (:require [ov_movies.util :refer [fetch-sm-secret find-first]]
             [ov_movies.db.db :as db]
             [ov_movies.config :refer [cfg]]
@@ -39,7 +39,7 @@
                                             "<a href=\"http://example.com/\">BLACKLIST MOVIE</a>"]))) movies-with-screenings)))
 
 (defn notify! [upcoming-screenings]
-  (let [should-send? (< 0 (count upcoming-screenings))
+  (let [should-send? false #_(< 0 (count upcoming-screenings))
         movies-with-screenings (group-by-movie upcoming-screenings)
         message (format-message movies-with-screenings)
         params {:token   api-token
@@ -49,5 +49,10 @@
                 :html    1
                 ;; URL hardcoded until we build a custom page
                 :url     "https://www.cineplex.de/filmreihe/original/548/neufahrn/"}]
+    (println params)
     (when should-send? (client/post endpoint {:form-params params
                                               :accept      :json}))))
+
+(def screenings (db/upcoming-screenings))
+
+(notify! screenings)
