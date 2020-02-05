@@ -3,7 +3,8 @@
             [ov_movies.db.db :as db]
             [ov_movies.config :refer [cfg]]
             [clj-http.client :as client]
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  (:import [java.time.format DateTimeFormatter]))
 
 ;; POST to this
 ;; https://pushover.net/api
@@ -25,9 +26,11 @@
              []
              (group-by :movie screenings)))
 
-(defn format-screenings [screenings] (str/join "\n" (map (fn [s] (str (:date s))) (sort-by :date screenings))))
+(def formatter (DateTimeFormatter/ofPattern "E dd.LL. HH:mm"))
+(defn format-date [date] (.format date formatter))
+(defn format-screening [screening] (-> screening :date format-date))
+(defn format-screenings [screenings] (str/join "\n" (map format-screening (sort-by :date screenings))))
 
-;;; TODO: format date "Tue, 23rd Jan, 23:00"
 (defn format-message [movies-with-screenings]
   (str/join "\n\n" (map (fn [movie]
                           (let [screenings (format-screenings (:screenings movie))]
