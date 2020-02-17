@@ -1,4 +1,4 @@
-(ns ov_movies.config
+(ns ov-movies.config
   (:import [java.time ZoneId]))
 
 (def cfg {:timezone                    (ZoneId/of "Europe/Paris")

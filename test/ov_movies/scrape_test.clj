@@ -1,7 +1,7 @@
 (ns ov-movies.scrape-test
   (:require [clojure.test :refer :all]
             [clojure.java.io :refer [resource]]
-            [ov_movies.crawler.scrape :refer :all]))
+            [ov-movies.crawl.scrape :refer :all]))
 
 (deftest test-detail-urls
   (let [html (slurp (resource "test/cineplex-overview.html"))
@@ -107,7 +107,7 @@
                             :title  "Bad Boys for Life"
                             :poster "poster.url"}]
               :screenings [{:id       "E1DE9000023AIYWYCE"
-                            :date     (ov_movies.util/parse-date "2020-01-22-21-55")
+                            :date     (ov-movies.util/parse-date "2020-01-22-21-55")
                             :movie_id "267153"}]} (normalize-scraped parsed))))
     (testing "does not explode on empty input"
       (is (= {:movies     []

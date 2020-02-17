@@ -1,12 +1,12 @@
-(ns ov_movies.crawler.scrape
+(ns ov-movies.crawl.scrape
   (:require
-    [ov_movies.movie :as movie]
+    [ov-movies.movie :as movie]
     [clojure.spec.alpha :as s]
     [clojure.spec.gen.alpha :as gen]
     [clojure.string :as str]
     [hickory.core :refer [parse, as-hickory]]
     [hickory.select :as sel]
-    [ov_movies.util :as u]))
+    [ov-movies.util :as u]))
 
 (s/conform ::movie/movie {::movie/id "123456"})
 

@@ -1,11 +1,10 @@
-(ns ov_movies.crawler.crawler
+(ns ov-movies.crawl.crawler
   (:require
-    [ov_movies.crawler.scrape :refer [scrape!]]
-    [ov_movies.crawler.notification :refer [notify!]]
-    [ov_movies.db.db :as db]
-    [ov_movies.db.movies :as movies]
-    [ov_movies.db.screenings :as screenings]
-    [uswitch.lambada.core :refer [deflambdafn]]))
+    [ov-movies.crawl.scrape :refer [scrape!]]
+    [ov-movies.crawl.notification :refer [notify!]]
+    [ov-movies.db.db :as db]
+    [ov-movies.db.movies :as movies]
+    [ov-movies.db.screenings :as screenings]))
 
 (defn screening-tuple [{id       :id
                         movie-id :movie_id
@@ -27,7 +26,7 @@
       (notify! upcoming-screenings))))
 
 ;; Method described here works as well: https://bernhardwenzel.com/articles/using-clojure-with-aws-lambda/#requesthandler-clojure-version
-(deflambdafn ov_movies.crawler.handler
-             [in out ctx]
-             (println "crawling...")
-             (crawl))
+;(deflambdafn ov_movies.crawler.handler
+;             [in out ctx]
+;             (println "crawling...")
+;             (crawl))

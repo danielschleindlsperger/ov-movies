@@ -1,9 +1,8 @@
-(ns ov_movies.api.handler
-  (:require [uswitch.lambada.core :refer [deflambdafn]]
-            [clojure.java.io :as io]
+(ns ov-movies.api.handler
+  (:require [clojure.java.io :as io]
             [clojure.data.json :as json]
-            [ov_movies.db.movies :as movies]
-            [ov_movies.db.db :refer [db-conn]]))
+            [ov-movies.db.movies :as movies]
+            [ov-movies.db.db :refer [db-conn]]))
 
 (def not-found {:statusCode 404 :body "Not found." :headers {}})
 
@@ -16,10 +15,10 @@
       not-found)
     not-found))
 
-(deflambdafn ov_movies.api.handler
-             [in out ctx]
-             (let [req (-> in io/reader (json/read :key-fn keyword))
-                   response (handle req)]
-               (println req)
-               (with-open [w (io/writer out)]
-                 (json/write response w))))
+;(deflambdafn ov_movies.api.handler
+;             [in out ctx]
+;             (let [req (-> in io/reader (json/read :key-fn keyword))
+;                   response (handle req)]
+;               (println req)
+;               (with-open [w (io/writer out)]
+;                 (json/write response w))))

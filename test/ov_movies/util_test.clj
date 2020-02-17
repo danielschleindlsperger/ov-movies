@@ -1,6 +1,6 @@
-(ns ov_movies.util-test
+(ns ov-movies.util-test
   (:require [clojure.test :refer :all]
-            [ov_movies.util :refer :all])
+            [ov-movies.util :refer :all])
   (:import [java.time ZoneId LocalDateTime]))
 
 (deftest test-parse-date

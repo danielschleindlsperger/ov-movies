@@ -1,18 +1,21 @@
 {
  :duct.profile/base
-                       {:duct.core/project-ns       ov-movies
+                            {:duct.core/project-ns    ov-movies
 
-                        ;:duct.router/cascading
-                        ;                            [#ig/ref [:hello-duct.handler/example]]
-                        ;
-                        ;:hello-duct.handler/example {:db #ig/ref :duct.database/sql}
-                        }
+                             :duct.server.http/http-kit {}
+
+                             ;; Fallthrough router
+                             :duct.router/cascading
+                                                      [#ig/ref [:ov-movies.crawl/handler]]
+
+                             ;; Handler definitions
+                             :ov-movies.crawl/handler {:db #ig/ref :duct.database/sql}
+                             }
 
 
- :duct.profile/dev     #duct/include "dev"
- :duct.profile/local   #duct/include "local"
- :duct.profile/prod    {}
-
- :duct.module/logging  {}
- ;:duct.module.web/site {}
- :duct.module/sql      {}}
+ :duct.profile/dev          #duct/include "dev"
+ :duct.profile/local        #duct/include "local"
+ :duct.profile/prod         {}
+ :duct.module/logging       {}
+ :duct.module.web/site      {}
+ :duct.module/sql           {}}

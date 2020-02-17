@@ -1,8 +1,8 @@
-(ns ov_movies.util
+(ns ov-movies.util
   (:import [java.time ZonedDateTime ZoneId]
            [java.time.format DateTimeFormatter])
   (:require [cognitect.aws.client.api :as aws]
-            [ov_movies.config :refer [cfg]]))
+            [ov-movies.config :refer [cfg]]))
 
 (defn parse-date
   "Parses a date in the format YYYY-MM-dd-HH-mm to a java `OffsetDateTime`"

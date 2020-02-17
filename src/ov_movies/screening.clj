@@ -1,4 +1,4 @@
-(ns ov_movies.screening
+(ns ov-movies.screening
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen])
   (:import [java.time OffsetDateTime ZonedDateTime]))

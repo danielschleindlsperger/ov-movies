@@ -1,4 +1,4 @@
--- src/ov_movies/db/sql/movies.sql
+-- src/ov-movies/db/sql/movies.sql
 
 -- :name insert-movie :returning-execute
 -- :doc Insert a single movie returning affected row

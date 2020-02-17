@@ -1,7 +1,7 @@
-(ns ov_movies.crawler.notification
-  (:require [ov_movies.util :refer [fetch-sm-secret find-first]]
-            [ov_movies.db.db :as db]
-            [ov_movies.config :refer [cfg]]
+(ns ov-movies.crawl.notification
+  (:require [ov-movies.util :refer [fetch-sm-secret find-first]]
+            [ov-movies.db.db :as db]
+            [ov-movies.config :refer [cfg]]
             [clj-http.client :as client]
             [clojure.string :as str])
   (:import [java.time.format DateTimeFormatter]))

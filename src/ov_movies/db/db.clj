@@ -1,7 +1,7 @@
-(ns ov_movies.db.db
-  (:require [ov_movies.util :refer [fetch-sm-secret]]
-            [ov_movies.db.screenings :as screenings]
-            [ov_movies.config :refer [cfg]]
+(ns ov-movies.db.db
+  (:require [ov-movies.util :refer [fetch-sm-secret]]
+            [ov-movies.db.screenings :as screenings]
+            [ov-movies.config :refer [cfg]]
             [clojure.string :as str])
   (:import
     [java.time OffsetDateTime Instant ZoneId]

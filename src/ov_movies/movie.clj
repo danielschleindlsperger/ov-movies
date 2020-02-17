@@ -1,4 +1,4 @@
-(ns ov_movies.movie
+(ns ov-movies.movie
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :as str]))
