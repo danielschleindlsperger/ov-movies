@@ -21,3 +21,9 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+/logs
+/.dir-locals.el
+/profiles.clj
+/dev/resources/local.edn
+/dev/src/local.clj
