@@ -1,22 +1,26 @@
 (ns ov-movies.util
-  (:import [java.time ZonedDateTime ZoneId]
-           [java.time.format DateTimeFormatter])
-  (:require [cognitect.aws.client.api :as aws]
-            [ov-movies.config :refer [cfg]]))
+  (:import [java.time OffsetDateTime Instant ZonedDateTime]
+           [java.time.format DateTimeFormatter]
+           [java.sql Timestamp])
+  (:require [ov-movies.config :refer [config]]))
 
 (defn parse-date
   "Parses a date in the format YYYY-MM-dd-HH-mm to a java `OffsetDateTime`"
   [s]
-  (let [format (.withZone (DateTimeFormatter/ofPattern "uuuu-MM-dd-HH-mm") (:timezone cfg))
+  (let [format (.withZone (DateTimeFormatter/ofPattern "uuuu-MM-dd-HH-mm") (:timezone config))
         zoned-date (ZonedDateTime/parse s format)]
     (.toOffsetDateTime zoned-date)))
 
-(def secretsmanager (aws/client {:api :secretsmanager}))
-(aws/validate-requests secretsmanager true)
-(defn fetch-sm-secret
-  [secret-id]
-  "Takes an AWS Secrets Manager Secret ARN and returns its SecretString or nil if it isn't defined."
-  (:SecretString (aws/invoke secretsmanager {:op :GetSecretValue :request {:SecretId secret-id}})))
+(defn parse-zoned-date-time
+  [s]
+  (let [zoned-date (ZonedDateTime/parse s DateTimeFormatter/ISO_ZONED_DATE_TIME)]
+    (.toOffsetDateTime zoned-date)))
+
+(defn sqltimestamp->offsetdatetime
+  "Converts a java.sql.Timestamp to a java.date.OffsetDateTime with timezone Europe/Berlin"
+  [^Timestamp timestamp]
+  (let [instant (Instant/ofEpochMilli (.getTime timestamp))]
+    (OffsetDateTime/ofInstant instant (:timezone config))))
 
 (defn find-first
   [f coll]

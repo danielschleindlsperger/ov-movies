@@ -1,3 +1,0 @@
-{:duct.core/environment      :development
- ;; TODO: DOCKER COMPOSE POSTGERS URL
- }

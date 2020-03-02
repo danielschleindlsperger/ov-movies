@@ -1,21 +1,5 @@
-{
- :duct.profile/base
-                            {:duct.core/project-ns    ov-movies
-
-                             :duct.server.http/http-kit {}
-
-                             ;; Fallthrough router
-                             :duct.router/cascading
-                                                      [#ig/ref [:ov-movies.crawl/handler]]
-
-                             ;; Handler definitions
-                             :ov-movies.crawl/handler {:db #ig/ref :duct.database/sql}
-                             }
-
-
- :duct.profile/dev          #duct/include "dev"
- :duct.profile/local        #duct/include "local"
- :duct.profile/prod         {}
- :duct.module/logging       {}
- :duct.module.web/site      {}
- :duct.module/sql           {}}
+{:database {:connection-uri #or [#env DATABASE_URL "jdbc:postgresql://localhost:5432/ov_movies?user=root&password=root"]}
+ :server {:port #long #or [#env PORT 3000]
+          :base-url #or [#env URL "http://localhost:3000"]}
+ :pushover {:user-key #env PUSHOVER_USER_KEY
+            :api-key #env PUSHOVER_API_KEY}}

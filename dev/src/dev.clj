@@ -1,37 +1,21 @@
 (ns dev
   (:refer-clojure :exclude [test])
-  (:require [clojure.repl :refer :all]
-            [fipp.edn :refer [pprint]]
-            [clojure.tools.namespace.repl :refer [refresh]]
-            [clojure.java.io :as io]
-            [duct.core :as duct]
-            [duct.core.repl :as duct-repl :refer [auto-reset]]
-            [eftest.runner :as eftest]
-            [integrant.core :as ig]
-            [integrant.repl :refer [clear halt go init prep reset]]
-            [integrant.repl.state :refer [config system]]
-            [clojure.java.jdbc :as jdbc]))
+  (:require [eftest.runner :as eftest]
+            [clojure.java.jdbc :as jdbc]
+            [ov-movies.database :refer [db]]
+            [org.httpkit.client :refer [request]]
+            [ov-movies.web-server :refer [start-server restart-server]]
+            [ov-movies.crawl.notification :refer [send-message send-message-dev]]))
 
-(duct/load-hierarchy)
-
-(defn read-config []
-  (duct/read-config (io/resource "ov_movies/config.edn")))
+(defn restart []
+  (with-redefs [send-message send-message-dev]
+    (do (restart-server))))
 
 (defn test []
   (eftest/run-tests (eftest/find-tests "test")))
 
-(def profiles
-  [:duct.profile/dev :duct.profile/local])
+(defn query [stmt] (jdbc/query db [stmt]))
 
-(clojure.tools.namespace.repl/set-refresh-dirs "dev/src" "src" "test")
+(defn http [url] (deref (request {:url url}) 10000 "Timed out after 10000ms"))
 
-(when (io/resource "local.clj")
-  (load "local"))
-
-(integrant.repl/set-prep! #(duct/prep-config (read-config) profiles))
-
-(defn get-db [] (:duct.database.sql/hikaricp system))
-
-(defn sql [sql-params]
-  (let [db (:spec (:duct.database.sql/hikaricp system))]
-    (jdbc/query db sql-params)))
+(restart)

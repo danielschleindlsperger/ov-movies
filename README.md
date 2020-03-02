@@ -12,6 +12,9 @@ It will then persist any entries that were not previously scraped in a database 
 ```bash
 lein repl :headless # start leiningen repl in headless mode to connect to (e.g. from Cursive)
 
+(dev) # switch to dev namespace
+(restart) # restart web server
+
 npm run build # build uberjars
 
 npm run deploy # deploy stack to aws
@@ -26,22 +29,22 @@ The application is split up into two "processes". The crawler and the web app.
 - Crawls the cineplex website
 - Stores newly found entries in a database
 - Sends a notification
-
-Invokable with `lein with-profiles crawler run`
+- Triggered by URL invokation
 
 ### Web App
 
-AWS APIGateway (LambdaRestApi) with a single Clojure (JVM) handler.
+- Blacklist a movie (hide from user)
+- List all upcoming screenings
 
 #### Enpoints
 
-##### `/blacklist/$movie-id`
+##### `/blacklist/:movie-id`
 
 Hides a movie from future notifications.
 
 ## Database
 
-Postgres with hugsql and migratus.
+Postgres.
 
 ### Development
 
@@ -50,8 +53,6 @@ Postgres with hugsql and migratus.
 ### Production
 
 I'm currently using a free database on [elephantsql.com/](https://www.elephantsql.com/).
-The connection string is stored in AWS Secrets Manager.
-The ARN is injected to the Lambda functions as an environment variable `DATABASE_URL_SECRET_ID`.
 
 ### Migrations
 
@@ -79,6 +80,10 @@ npx cdk deploy # deploy this stack to your default AWS account/region
 
 ## Roadmap (TODOs)
 
+- Deployment
+    - Remove CDK deployment to AWS
+    - Deploy to Heroku
+    - HTTP Webhook to trigger crawler with IFTTT
 - Include original German movies as well
 - HTML page with filterable results (Optional)
     - Pushover Notifications have a maximum length so we could just render it out as html and shorten the notification

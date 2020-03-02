@@ -1,6 +1,10 @@
 (ns ov-movies.screening
   (:require [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen])
+            [clojure.spec.gen.alpha :as gen]
+            [clojure.java.jdbc :as jdbc]
+            [honeysql.helpers]
+            [honeysql-postgres.format]
+            [honeysql.format :as sql])
   (:import [java.time OffsetDateTime ZonedDateTime]))
 
 
@@ -15,3 +19,14 @@
 
 (s/def ::screening (s/keys :req [::id ::date]
                            :opt [::movie_id]))
+
+(defn insert-screenings-query [screenings]
+  (sql/format {:insert-into :screenings
+               :values      screenings
+               :on-conflict [:id]
+               :do-nothing  []
+               :returning   [:*]}))
+
+(defn insert-screenings! [db screenings]
+  (println (count (insert-screenings-query screenings)))
+  (jdbc/query db (insert-screenings-query screenings)))
