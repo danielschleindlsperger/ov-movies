@@ -66,7 +66,11 @@ I'm currently using a free database on [elephantsql.com/](https://www.elephantsq
 
 Build with `npm run build`
 
-### Deploy Infrastructure 
+### Deployment
+
+````bash
+git push heroku master
+```` 
 
 ```bash
 npm install
