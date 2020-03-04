@@ -19,16 +19,18 @@
 ;; HTTP helpers
 
 (defn not-found
-  ([] {:headers {"status" 404 "content-type" "text/plain"} :body "not found."})
-  ([body] {:headers {"status" 404 "content-type" "text/plain"} :body body}))
+  ([] {:status 404 :headers {"content-type" "text/plain"} :body "not found."})
+  ([body] {:stauts 404 :headers {"content-type" "text/plain"} :body body}))
 
 (defn server-error
-  ([] {:headers {"status" 500 "content-type" "text/plain"} :body "internal server error."})
-  ([body] {:headers {"status" 500 "content-type" "text/plain"} :body body}))
+  ([] {:status 500 :headers {"content-type" "text/plain"} :body "internal server error."})
+  ([body] {:status 500 :headers {"content-type" "text/plain"} :body body}))
 
 (defn ok
-  ([body] {:headers {"status" 200 "content-type" "text/plain"} :body body})
-  ([body headers] {:headers (merge {"status" 200 "content-type" "text/plain"} headers) :body body}))
+  ([body] {:status 200 :headers {"content-type" "text/plain"} :body body})
+  ([body headers] {:status 200 :headers (merge {"content-type" "text/plain"} headers) :body body}))
+
+(defn temporary-redirect [location] {:status 307 :headers {"Location" location}})
 
 ;; Middleware
 
@@ -44,14 +46,17 @@
 
 ;; Handlers
 
-(defn blacklist-handler [{:keys [db path-params] :as req}]
+(defn blacklist-handler [{:keys [db path-params headers] :as req}]
   (let [id (-> path-params :id)
-        result (first (blacklist-movie! db {:id id}))]
+        result (first (blacklist-movie! db {:id id}))
+        referer (get headers "referer")]
     (if (empty? result)
       (not-found (format "Movie with id '%s' not found." id))
       (do
         (log/info {:msg "successfully blacklisted movie" :movie result})
-        (ok (format "Successfully blacklisted movie '%s'" (:title result)))))))
+        (if (nil? referer)
+          (ok (format "Successfully blacklisted movie '%s'" (:title result)))
+          (temporary-redirect referer))))))
 
 (defn crawl-handler [{:keys [db send-message]}]
   (do (log/info "Starting to crawl...")
