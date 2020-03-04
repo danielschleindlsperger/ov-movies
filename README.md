@@ -32,7 +32,15 @@ The application is split up into two "processes". The crawler and the web app.
 - Blacklist a movie (hide from user)
 - List all upcoming screenings
 
-#### Enpoints
+#### Endpoints
+
+##### `/`
+
+Overview page with future screenings of OV movies.
+
+##### `/crawl`
+
+Trigger a crawl of the cineplex website.
 
 ##### `/blacklist/:movie-id`
 
