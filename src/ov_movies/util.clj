@@ -37,7 +37,7 @@
 (defn format-date
   "Format a java.time.OffsetDateTime to a user readable string."
   [date]
-  (let [now (OffsetDateTime/now)
+  (let [now (OffsetDateTime/now (:timezone config))
         in-days (.until (.toLocalDate now) (.toLocalDate date) ChronoUnit/DAYS)]
     (format "%s (%s)" (.format date formatter) (date-diff in-days))))
 
