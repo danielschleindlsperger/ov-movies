@@ -70,7 +70,8 @@
             (ok "Crawled movies successfully!"))))))
 
 (defn render-upcoming-movies [upcoming-movies base-url]
-  (html5 [:head
+  (html5 {:lang "en"}
+         [:head
           [:title "Upcoming Movies - ov-movies"]
           [:meta {:charset "UTF-8"}]
           [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
@@ -81,7 +82,7 @@
            [:div.mt-12
             (for [movie upcoming-movies]
               [:section.mt-12
-               [:img {:src (:poster movie) :style "max-width: 300px;"}]
+               [:img {:src (:poster movie) :alt (:title movie) :style "max-width: 300px;"}]
                [:h1.mt-6.text-2xl.font-bold (:title movie)]
                [:ul.font-mono.mt-2
                 (for [screening (:screenings movie)]
