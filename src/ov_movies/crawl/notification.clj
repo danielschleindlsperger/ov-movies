@@ -1,8 +1,7 @@
 (ns ov-movies.crawl.notification
   (:require [ov-movies.util :refer [find-first]]
             [ov-movies.config :refer [config]]
-    ;; TODO: replace with http-kit/client
-            [clj-http.client :as client]
+            [org.httpkit.client :as client]
             [clojure.string :as str]
             [taoensso.timbre :as log])
   (:import [java.time.format DateTimeFormatter]))
@@ -26,8 +25,10 @@
 (defn send-message [params api-key user-key]
   {:pre [(some? api-key) (some? user-key)]}
   (let [form-params (merge params {:token api-key :user user-key})]
-    (client/post endpoint {:form-params form-params
-                           :accept      :json})))
+    (deref (client/request {:url         endpoint
+                            :method      :post
+                            :headers     {"accept" "application/json"}
+                            :form-params form-params}))))
 
 (defn send-message-dev [params api-key user-key]
   (log/debug "SENDING NOTIFICATION")

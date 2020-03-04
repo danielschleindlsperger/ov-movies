@@ -12,6 +12,10 @@
   ([] {:headers {"status" 404 "content-type" "text/plain"} :body "not found."})
   ([body] {:headers {"status" 404 "content-type" "text/plain"} :body body}))
 
+(defn server-error
+  ([] {:headers {"status" 500 "content-type" "text/plain"} :body "internal server error."})
+  ([body] {:headers {"status" 500 "content-type" "text/plain"} :body body}))
+
 (defn ok
   ([body] {:headers {"status" 200 "content-type" "text/plain"} :body body})
   ([body headers] {:headers (merge headers {"status" 200 "content-type" "text/plain"}) :body body}))

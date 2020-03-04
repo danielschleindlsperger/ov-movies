@@ -11,7 +11,6 @@
                  ;; http
                  [http-kit "2.3.0"]
                  [metosin/reitit-ring "0.4.2"]
-                 [clj-http "3.10.0"]
 
                  ;; logging
                  [com.taoensso/timbre "4.10.0"]
@@ -26,7 +25,7 @@
                  [nilenso/honeysql-postgres "0.2.6"]
                  [migratus "1.2.7"]
 
-                 ;; html parser
+                 ;; html
                  [hickory "0.7.1"]]
   :main ^:skip-aot ov-movies.main
   :resource-paths ["resources" "target/resources"]
