@@ -14,10 +14,6 @@ lein repl :headless # start leiningen repl in headless mode to connect to (e.g. 
 
 (dev) # switch to dev namespace
 (restart) # restart web server
-
-npm run build # build uberjars
-
-npm run deploy # deploy stack to aws
 ```
 
 ## Architecture
@@ -44,7 +40,7 @@ Hides a movie from future notifications.
 
 ## Database
 
-Postgres.
+Postgres
 
 ### Development
 
@@ -62,30 +58,13 @@ I'm currently using a free database on [elephantsql.com/](https://www.elephantsq
 
 `lein migratus rollback`
 
-## Infrastructure and Deployment
-
-Build with `npm run build`
-
 ### Deployment
 
 ````bash
 git push heroku master
 ```` 
 
-```bash
-npm install
-
-npx cdk synth # emits the synthesized CloudFormation template
-npx cdk diff # compare deployed stack with current state
-
-# actual deploy
-npx cdk deploy # deploy this stack to your default AWS account/region
-```
-
 ## Roadmap (TODOs)
 
-- Protect crawl endpoint with token?
-- Truncate the notification so that it
+- Protect crawl endpoint with token
 - Include original German movies as well
-- HTML page with filterable results (Optional)
-    - Pushover Notifications have a maximum length so we could just render it out as html and shorten the notification

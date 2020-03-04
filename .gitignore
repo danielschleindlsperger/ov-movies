@@ -11,17 +11,6 @@ pom.xml.asc
 .hgignore
 .hg/
 .idea
-
-## CDK
-*.js
-!jest.config.js
-*.d.ts
-node_modules
-
-# CDK asset staging directory
-.cdk.staging
-cdk.out
-
 /logs
 /.dir-locals.el
 /profiles.clj
