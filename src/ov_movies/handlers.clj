@@ -86,7 +86,7 @@
                [:ul.font-mono.mt-2
                 (for [screening (:screenings movie)]
                   [:li.mt-2 (format-date (:date screening))])]
-               [:a.px-4.py-2.mt-4.inline-block.bg-gray-800.text-gray-100.rounded.shadow-md
+               [:a.px-4.py-2.mt-4.inline-block.bg-gray-800.text-gray-100.font-semibold.rounded.shadow-md
                 {:href (str base-url "/blacklist/" (:id movie))} "Blacklist"]])]]]))
 
 (defn upcoming-screenings-handler [{:keys [db]}]
