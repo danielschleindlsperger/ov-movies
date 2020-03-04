@@ -8,7 +8,8 @@
             [ov-movies.crawl.crawler :refer [crawl!]]
             [ov-movies.crawl.notification :refer [notify! send-message]]
             [ov-movies.movie :refer [get-movies-with-upcoming-screenings blacklist-movie!]]
-            [ov-movies.database :refer [db]])
+            [ov-movies.database :refer [db]]
+            [ov-movies.config :refer [config]])
   (:import [java.time OffsetDateTime]
            [java.io PrintWriter]))
 
@@ -63,7 +64,7 @@
                 (server-error "something went wrong sending out the notifications"))
             (ok "Crawled movies successfully!"))))))
 
-(defn render-upcoming-movies [upcoming-movies]
+(defn render-upcoming-movies [upcoming-movies base-url]
   (html5 [:head
           [:title "Upcoming Movies - ov-movies"]
           [:meta {:charset "UTF-8"}]
@@ -79,11 +80,14 @@
                [:h1.mt-6.text-2xl.font-bold (:title movie)]
                [:ul.font-mono.mt-2
                 (for [screening (:screenings movie)]
-                  [:li.mt-2 (format-date (:date screening))])]])]]]))
+                  [:li.mt-2 (format-date (:date screening))])]
+               [:a.px-4.py-2.mt-4.inline-block.bg-gray-800.text-gray-100.rounded.shadow-md
+                {:href (str base-url "/blacklist/" (:id movie))} "Blacklist"]])]]]))
 
 (defn upcoming-screenings-handler [{:keys [db]}]
-  (let [upcoming-movies (get-movies-with-upcoming-screenings db)]
-    (ok (render-upcoming-movies upcoming-movies) {"content-type" "text/html"})))
+  (let [upcoming-movies (get-movies-with-upcoming-screenings db)
+        base-url (-> config :server :base-url)]
+    (ok (render-upcoming-movies upcoming-movies base-url) {"content-type" "text/html"})))
 
 (defn create-handler [config]
   (ring/ring-handler (ring/router [["/crawl" {:get {:middleware [[wrap-db db] [wrap-message-sender config]]
