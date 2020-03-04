@@ -1,10 +1,19 @@
 (ns ov-movies.handlers
   (:require [reitit.ring :as ring]
             [taoensso.timbre :as log]
+            [clojure.data.json :as json]
+            [hiccup.core :refer [html]]
+            [hiccup.page :refer [html5]]
+            [ov-movies.util :refer [offset-date-time->iso-offset-date-time-string format-date]]
             [ov-movies.crawl.crawler :refer [crawl!]]
             [ov-movies.crawl.notification :refer [notify! send-message]]
             [ov-movies.movie :refer [get-movies-with-upcoming-screenings blacklist-movie!]]
-            [ov-movies.database :refer [db]]))
+            [ov-movies.database :refer [db]])
+  (:import [java.time OffsetDateTime]
+           [java.io PrintWriter]))
+
+(extend OffsetDateTime json/JSONWriter {:-write (fn [in ^PrintWriter out]
+                                                  (.print out (str "\"" (offset-date-time->iso-offset-date-time-string in) "\"")))})
 
 ;; HTTP helpers
 
@@ -18,7 +27,7 @@
 
 (defn ok
   ([body] {:headers {"status" 200 "content-type" "text/plain"} :body body})
-  ([body headers] {:headers (merge headers {"status" 200 "content-type" "text/plain"}) :body body}))
+  ([body headers] {:headers (merge {"status" 200 "content-type" "text/plain"} headers) :body body}))
 
 ;; Middleware
 
@@ -47,12 +56,39 @@
   (do (log/info "Starting to crawl...")
       (crawl! db)
       (let [upcoming-movies (get-movies-with-upcoming-screenings db)]
-        (println "sending notifications...")
-        (notify! upcoming-movies send-message)
-        (ok "Crawled movies successfully!"))))
+        (log/info "sending notifications...")
+        (let [res (notify! upcoming-movies send-message)]
+          (if (<= 300 (:status res))
+            (do (log/error (:body res))
+                (server-error "something went wrong sending out the notifications"))
+            (ok "Crawled movies successfully!"))))))
+
+(defn render-upcoming-movies [upcoming-movies]
+  (html5 [:head
+          [:title "Upcoming Movies - ov-movies"]
+          [:meta {:charset "UTF-8"}]
+          [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+          [:link {:href "https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" :rel "stylesheet"}]]
+         [:body
+          [:main.max-w-2xl.p-4.mx-auto
+           [:h1.text-3xl.text-center.font-bold "Upcoming Movies"]
+           [:div.mt-12
+            (for [movie upcoming-movies]
+              [:section.mt-12
+               [:img {:src (:poster movie) :style "max-width: 300px;"}]
+               [:h1.mt-6.text-2xl.font-bold (:title movie)]
+               [:ul.font-mono.mt-2
+                (for [screening (:screenings movie)]
+                  [:li.mt-2 (format-date (:date screening))])]])]]]))
+
+(defn upcoming-screenings-handler [{:keys [db]}]
+  (let [upcoming-movies (get-movies-with-upcoming-screenings db)]
+    (ok (render-upcoming-movies upcoming-movies) {"content-type" "text/html"})))
 
 (defn create-handler [config]
   (ring/ring-handler (ring/router [["/crawl" {:get {:middleware [[wrap-db db] [wrap-message-sender config]]
                                                     :handler    crawl-handler}}]
                                    ["/blacklist/:id" {:get {:middleware [[wrap-db db]]
-                                                            :handler    blacklist-handler}}]])))
+                                                            :handler    blacklist-handler}}]
+                                   ["/" {:get {:middleware [[wrap-db db]]
+                                               :handler    upcoming-screenings-handler}}]])))

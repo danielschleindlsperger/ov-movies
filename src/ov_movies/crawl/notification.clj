@@ -1,16 +1,13 @@
 (ns ov-movies.crawl.notification
-  (:require [ov-movies.util :refer [find-first]]
+  (:require [ov-movies.util :refer [find-first format-date]]
             [ov-movies.config :refer [config]]
             [org.httpkit.client :as client]
             [clojure.string :as str]
-            [taoensso.timbre :as log])
-  (:import [java.time.format DateTimeFormatter]))
+            [taoensso.timbre :as log]))
 
 ;; https://pushover.net/api
 (def endpoint "https://api.pushover.net/1/messages.json")
 
-(def formatter (DateTimeFormatter/ofPattern "E dd.LL. HH:mm"))
-(defn format-date [date] (.format date formatter))
 (defn format-screening [screening] (-> screening :date format-date))
 (defn format-screenings [screenings] (str/join "\n" (map format-screening (sort-by :date screenings))))
 
@@ -40,6 +37,5 @@
         params {:title   "Originale!"
                 :message message
                 :html    1
-                ;; URL hardcoded until we build a custom page
-                :url     "https://www.cineplex.de/filmreihe/original/548/neufahrn/"}]
+                :url     (-> config :server :base-url)}]
     (when should-send? (send-message params))))

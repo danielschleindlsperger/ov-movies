@@ -85,7 +85,6 @@ npx cdk deploy # deploy this stack to your default AWS account/region
 ## Roadmap (TODOs)
 
 - Protect crawl endpoint with token?
-- Page with overview of all upcoming screenings
 - Truncate the notification so that it
 - Include original German movies as well
 - HTML page with filterable results (Optional)

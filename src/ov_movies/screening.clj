@@ -28,5 +28,4 @@
                :returning   [:*]}))
 
 (defn insert-screenings! [db screenings]
-  (println (count (insert-screenings-query screenings)))
   (jdbc/query db (insert-screenings-query screenings)))

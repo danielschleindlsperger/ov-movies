@@ -26,6 +26,7 @@
                  [migratus "1.2.7"]
 
                  ;; html
+                 [hiccup "1.0.5"]
                  [hickory "0.7.1"]]
   :main ^:skip-aot ov-movies.main
   :resource-paths ["resources" "target/resources"]
