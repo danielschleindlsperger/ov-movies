@@ -84,10 +84,9 @@ npx cdk deploy # deploy this stack to your default AWS account/region
 
 ## Roadmap (TODOs)
 
-- Deployment
-    - Remove CDK deployment to AWS
-    - Deploy to Heroku
-    - HTTP Webhook to trigger crawler with IFTTT
+- Protect crawl endpoint with token?
+- Page with overview of all upcoming screenings
+- Truncate the notification so that it
 - Include original German movies as well
 - HTML page with filterable results (Optional)
     - Pushover Notifications have a maximum length so we could just render it out as html and shorten the notification
