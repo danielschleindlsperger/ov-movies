@@ -39,7 +39,8 @@
              :project/dev  {:source-paths   ["dev/src"]
                             :resource-paths ["dev/resources"]
                             :dependencies   [[eftest "0.5.7"]]}}
-  :plugins [[migratus-lein "0.7.2"]]
+  :plugins [[migratus-lein "0.7.2"]
+            [lein-kibit "0.1.8"]]
   :middleware []
   :migratus {:store         :database
              :migration-dir "migrations"
