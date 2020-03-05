@@ -9,7 +9,7 @@
 
 (defn restart []
   (with-redefs [send-message send-message-dev]
-    (do (restart-server))))
+    (restart-server)))
 
 (defn test []
   (eftest/run-tests (eftest/find-tests "test")))

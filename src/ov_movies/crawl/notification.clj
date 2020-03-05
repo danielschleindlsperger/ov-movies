@@ -32,7 +32,7 @@
   (log/debug (clojure.pprint/pprint params)))
 
 (defn notify! [movies send-message]
-  (let [should-send? (< 0 (count movies))
+  (let [should-send? (pos? (count movies))
         message (format-message movies)
         params {:title   "Originale!"
                 :message message

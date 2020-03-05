@@ -48,10 +48,10 @@
 (defn title
   "Parses a movies title from a detail pages hickory HTML."
   [detail-page]
-  (let [h1 (-> (sel/select (sel/tag :h1) detail-page) first)
+  (let [h1 (first (sel/select (sel/tag :h1) detail-page))
         text (filter string? (:content h1))
         title (str/join (map str/trim text))]
-    (if (str/blank? title) nil title)))
+    (when-not (str/blank? title) title)))
 
 (defn id-from-canonical
   "Takes HTML and returns the movie id parsed from the canonical url."
@@ -94,7 +94,7 @@
 (defn has-originals?
   "Determine if a parsed movie has original shows."
   [movie]
-  (< 0 (count (:original-dates movie))))
+  (pos? (count (:original-dates movie))))
 
 ;; for testing
 ;(def url "/film/bad-boys-for-life/267153/neufahrn/#vorstellungen")

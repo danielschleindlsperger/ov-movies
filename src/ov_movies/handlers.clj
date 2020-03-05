@@ -47,7 +47,7 @@
 ;; Handlers
 
 (defn blacklist-handler [{:keys [db path-params headers] :as req}]
-  (let [id (-> path-params :id)
+  (let [id (:id path-params)
         result (first (blacklist-movie! db {:id id}))
         referer (get headers "referer")]
     (if (empty? result)
