@@ -11,7 +11,7 @@
 (s/def ::id (s/with-gen (s/and string? #(-> % count (> 2)))
                         #(gen/string-alphanumeric)))
 
-(s/def ::date (s/with-gen (partial type OffsetDateTime)
+(s/def ::date (s/with-gen #(= (type %) OffsetDateTime)
                           ;; TODO: generate, don't use "now()"
                           #(gen/fmap (fn [_] (.toOffsetDateTime (ZonedDateTime/now))) (s/gen any?))))
 
