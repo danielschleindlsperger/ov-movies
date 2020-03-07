@@ -2,6 +2,7 @@
   (:require [reitit.ring :as ring]
             [taoensso.timbre :as log]
             [clojure.data.json :as json]
+            [clojure.string :as str]
             [hiccup.core :refer [html]]
             [hiccup.page :refer [html5]]
             [ov-movies.util :refer [offset-date-time->iso-offset-date-time-string format-date]]
@@ -11,7 +12,8 @@
             [ov-movies.database :refer [db]]
             [ov-movies.config :refer [config]])
   (:import [java.time OffsetDateTime]
-           [java.io PrintWriter]))
+           [java.io PrintWriter]
+           [java.util Base64]))
 
 (extend OffsetDateTime json/JSONWriter {:-write (fn [in ^PrintWriter out]
                                                   (.print out (str "\"" (offset-date-time->iso-offset-date-time-string in) "\"")))})
@@ -43,6 +45,30 @@
         user-key (-> config :pushover :user-key)]
     (fn [req]
       (handler (assoc req :send-message (fn [params] (send-message params api-key user-key)))))))
+
+(defn decode-base64 [s]
+  (String. (.decode (Base64/getDecoder) s)))
+(defn parse-password [auth-header]
+  (when (string? auth-header)
+    (-> auth-header
+        (str/replace "Basic " "")
+        (decode-base64)
+        (str/split #":")
+        (nth 1 nil))))
+
+(defn wrap-basic-auth [handler password]
+  {:pre [(not (str/blank? password))]}
+  (fn [req]
+    (let [supplied-password (-> req :headers (get "authorization") parse-password)]
+      (println (-> req :headers (get "authorization") ))
+      (println "supplied" supplied-password)
+      (println "actual" password)
+      (if (= supplied-password password)
+        (handler req)
+        {:status 401
+         :headers {"WWW-Authenticate" "Basic realm=\"Allow triggering a crawl\""
+                   "content-type" "text/basic"}
+         :body "Please enter the correct password. You can omit the username."}))))
 
 ;; Handlers
 
@@ -98,7 +124,7 @@
 (defn create-handler [config]
   (ring/ring-handler (ring/router [["/crawl" {:get {:middleware [[wrap-db db] [wrap-message-sender config]]
                                                     :handler    crawl-handler}}]
-                                   ["/blacklist/:id" {:get {:middleware [[wrap-db db]]
+                                   ["/blacklist/:id" {:get {:middleware [[wrap-basic-auth (:passphrase config)] [wrap-db db]]
                                                             :handler    blacklist-handler}}]
                                    ["/" {:get {:middleware [[wrap-db db]]
                                                :handler    upcoming-screenings-handler}}]])))

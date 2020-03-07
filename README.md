@@ -66,7 +66,18 @@ I'm currently using a free database on [elephantsql.com/](https://www.elephantsq
 
 `lein migratus rollback`
 
-### Deployment
+## Environment Variables
+
+| Name | Usage | 
+| ------------- |-------------|
+| BASE_URL | HTTPS URL of the application |
+| PASSPHRASE | User entered passphrase to protected endpoints |
+| DATABASE_URL | JDBC URL to Postgres database |
+| PORT | Port the application will run on. |
+| PUSHOVER_USER_KEY  | |
+| PUSHOVER_API_KEY  | |
+
+## Deployment
 
 ````bash
 git push heroku master
