@@ -5,28 +5,9 @@
 
 (deftest test-detail-urls
   (let [html (slurp (resource "test/cineplex-overview.html"))
-        expected ["/film/1917/362504/neufahrn/#vorstellungen"
-                  "/film/die-hochzeit/350336/neufahrn/#vorstellungen"
-                  "/film/jojo-rabbit/365150/neufahrn/#vorstellungen"
-                  "/film/die-wolf-gaeng/359819/neufahrn/#vorstellungen"
-                  "/film/tuerkler-geliyor/369752/neufahrn/#vorstellungen"
-                  "/film/das-geheime-leben-der-baeume/364500/neufahrn/#vorstellungen"
-                  "/film/bad-boys-for-life/267153/neufahrn/#vorstellungen"
-                  "/film/knives-out-mord-ist-familiensache/366877/neufahrn/#vorstellungen"
-                  "/film/star-wars-der-aufstieg-skywalkers/348869/neufahrn/#vorstellungen"
-                  "/film/jumanji-the-next-level/357200/neufahrn/#vorstellungen"
-                  "/film/die-eiskoenigin-2/362224/neufahrn/#vorstellungen"
-                  "/film/vier-zauberhafte-schwestern/364964/neufahrn/#vorstellungen"
-                  "/film/spione-undercover/339173/neufahrn/#vorstellungen"
-                  "/film/das-perfekte-geheimnis/361884/neufahrn/#vorstellungen"
-                  "/film/latte-igel-und-der-magische-wasserstein/356601/neufahrn/#vorstellungen"
-                  "/film/lindenberg-mach-dein-ding/362405/neufahrn/#vorstellungen"
-                  "/film/the-grudge/368043/neufahrn/#vorstellungen"
-                  "/film/der-kleine-rabe-socke-suche-nach-dem-verlorenen-schatz/334504/neufahrn/#vorstellungen"
-                  "/film/underwater-es-ist-erwacht/365147/neufahrn/#vorstellungen"
-                  "/film/cats/358567/neufahrn/#vorstellungen"
-                  "/film/games-auf-der-leinwand-3-stunden/354081/neufahrn/#vorstellungen"
-                  "/film/games-auf-der-leinwand-4-stunden/354078/neufahrn/#vorstellungen"]]
+        expected ["/film/die-hochzeit/350336/neufahrn/#vorstellungen"
+                  "/film/1917/362504/neufahrn/#vorstellungen"
+                  "/film/jojo-rabbit/365150/neufahrn/#vorstellungen"]]
     (testing "parses urls"
       (is (= expected (detail-urls html))))
     (testing "doesn't explode with bad input"

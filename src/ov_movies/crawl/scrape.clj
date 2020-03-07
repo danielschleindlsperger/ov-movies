@@ -77,7 +77,7 @@
   "Takes a showtime schedule link and parses the :date and :id."
   (let [time-el (first (sel/select (sel/tag :time) show))
         date (-> time-el :attrs :datetime)
-        time (-> time-el :content first (str/replace #":" "-"))
+        time (-> time-el :content first str/trim (str/replace #":" "-"))
         url (-> show :attrs :href)]
     {:date (str date "-" time)
      :id (parse-screening-id url)}))
