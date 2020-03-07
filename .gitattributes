@@ -1,0 +1,3 @@
+# https://github.com/github/linguist#using-gitattributes
+# Ignore HTML test files for statistics
+resources/test/**/*.html linguist-vendored
