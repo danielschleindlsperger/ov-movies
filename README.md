@@ -85,5 +85,4 @@ git push heroku master
 
 ## Roadmap (TODOs)
 
-- Protect crawl endpoint with token
 - Include original German movies as well
