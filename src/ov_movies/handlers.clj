@@ -64,9 +64,6 @@
   {:pre [(not (str/blank? password))]}
   (fn [req]
     (let [supplied-password (-> req :headers (get "authorization") parse-password)]
-      (println (-> req :headers (get "authorization")))
-      (println "supplied" supplied-password)
-      (println "actual" password)
       (if (= supplied-password password)
         (handler req)
         {:status  401
@@ -90,7 +87,6 @@
 
 (defn crawl-handler [{:keys [db send-message passphrase query-params query-string] :as req}]
   (let [supplied-passphrase (get query-params "passphrase")]
-    (println supplied-passphrase)
     (if (= supplied-passphrase passphrase)
       (do (log/info "Starting to crawl...")
           (crawl! db)
