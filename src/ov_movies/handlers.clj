@@ -5,6 +5,7 @@
             [clojure.string :as str]
             [hiccup.core :refer [html]]
             [hiccup.page :refer [html5]]
+            [ring.middleware.params :as params]
             [ov-movies.util :refer [offset-date-time->iso-offset-date-time-string format-date]]
             [ov-movies.crawl.crawler :refer [crawl!]]
             [ov-movies.crawl.notification :refer [notify! send-message]]
@@ -46,6 +47,10 @@
     (fn [req]
       (handler (assoc req :send-message (fn [params] (send-message params api-key user-key)))))))
 
+(defn wrap-passphrase [handler passphrase]
+  (fn [req]
+    (handler (assoc req :passphrase passphrase))))
+
 (defn decode-base64 [s]
   (String. (.decode (Base64/getDecoder) s)))
 (defn parse-password [auth-header]
@@ -55,20 +60,19 @@
         (decode-base64)
         (str/split #":")
         (nth 1 nil))))
-
 (defn wrap-basic-auth [handler password]
   {:pre [(not (str/blank? password))]}
   (fn [req]
     (let [supplied-password (-> req :headers (get "authorization") parse-password)]
-      (println (-> req :headers (get "authorization") ))
+      (println (-> req :headers (get "authorization")))
       (println "supplied" supplied-password)
       (println "actual" password)
       (if (= supplied-password password)
         (handler req)
-        {:status 401
+        {:status  401
          :headers {"WWW-Authenticate" "Basic realm=\"Allow triggering a crawl\""
-                   "content-type" "text/basic"}
-         :body "Please enter the correct password. You can omit the username."}))))
+                   "content-type"     "text/basic"}
+         :body    "Please enter the correct password. You can omit the username."}))))
 
 ;; Handlers
 
@@ -84,16 +88,22 @@
           (ok (format "Successfully blacklisted movie '%s'" (:title result)))
           (temporary-redirect referer))))))
 
-(defn crawl-handler [{:keys [db send-message]}]
-  (do (log/info "Starting to crawl...")
-      (crawl! db)
-      (let [upcoming-movies (get-movies-with-upcoming-screenings db)]
-        (log/info "sending notifications...")
-        (let [res (notify! upcoming-movies send-message)]
-          (if (<= 300 (:status res))
-            (do (log/error (:body res))
-                (server-error "something went wrong sending out the notifications"))
-            (ok "Crawled movies successfully!"))))))
+(defn crawl-handler [{:keys [db send-message passphrase query-params query-string] :as req}]
+  (let [supplied-passphrase (get query-params "passphrase")]
+    (println supplied-passphrase)
+    (if (= supplied-passphrase passphrase)
+      (do (log/info "Starting to crawl...")
+          (crawl! db)
+          (let [upcoming-movies (get-movies-with-upcoming-screenings db)]
+            (log/info "sending notifications...")
+            (let [res (notify! upcoming-movies send-message)]
+              (if (<= 300 (:status res))
+                (do (log/error (:body res))
+                    (server-error "something went wrong sending out the notifications"))
+                (ok "Crawled movies successfully!")))))
+      {:status  401
+       :body    "invalid passphrase provided."
+       :headers {"content-type" "text/plain"}})))
 
 (defn render-upcoming-movies [upcoming-movies base-url]
   (html5 {:lang "en"}
@@ -122,7 +132,10 @@
     (ok (render-upcoming-movies upcoming-movies base-url) {"content-type" "text/html"})))
 
 (defn create-handler [config]
-  (ring/ring-handler (ring/router [["/crawl" {:get {:middleware [[wrap-db db] [wrap-message-sender config]]
+  (ring/ring-handler (ring/router [["/crawl" {:get {:middleware [[params/wrap-params]
+                                                                 [wrap-passphrase (:passphrase config)]
+                                                                 [wrap-db db]
+                                                                 [wrap-message-sender config]]
                                                     :handler    crawl-handler}}]
                                    ["/blacklist/:id" {:get {:middleware [[wrap-basic-auth (:passphrase config)] [wrap-db db]]
                                                             :handler    blacklist-handler}}]

@@ -11,6 +11,7 @@
                  ;; http
                  [http-kit "2.3.0"]
                  [metosin/reitit-ring "0.4.2"]
+                 [ring/ring-core "1.8.0"]
 
                  ;; logging
                  [com.taoensso/timbre "4.10.0"]
