@@ -13,7 +13,7 @@ It will then persist any entries that were not previously scraped in a database 
 lein repl :headless # start leiningen repl in headless mode to connect to (e.g. from Cursive)
 
 (dev) # switch to dev namespace
-(restart) # restart web server
+(dev/restart) # restart web server
 ```
 
 ## Architecture
@@ -24,8 +24,8 @@ The application is split up into two "processes". The crawler and the web app.
 
 - Crawls the cineplex website
 - Stores newly found entries in a database
-- Sends a notification
-- Triggered by URL invokation
+- Sends a notification (via [Pushover](https://pushover.net/))
+- Triggered by URL invokation (via [IFTTT](https://ifttt.com/my_applets) Webhook)
 
 ### Web App
 
