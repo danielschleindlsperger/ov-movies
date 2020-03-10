@@ -1,4 +1,5 @@
-{:database   {:connection-uri #or [#env DATABASE_URL "jdbc:postgresql://localhost:5432/ov_movies?user=root&password=root"]}
+{:env #or [#env ENV "dev"] ; "dev" or "prod"
+ :database   {:connection-uri #or [#env DATABASE_URL "jdbc:postgresql://localhost:5432/ov_movies?user=root&password=root"]}
  :server     {:port     #long #or [#env PORT 3000]
               :base-url #or [#env BASE_URL "http://localhost:3000"]}
  :pushover   {:user-key #env PUSHOVER_USER_KEY

@@ -5,11 +5,10 @@
             [ov-movies.database :refer [db]]
             [org.httpkit.client :refer [request]]
             [ov-movies.web-server :refer [start-server restart-server]]
-            [ov-movies.crawl.notification :refer [send-message send-message-dev]]))
+            [ov-movies.crawl.notification :refer [send-message]]))
 
 (defn restart []
-  (with-redefs [send-message send-message-dev]
-    (restart-server)))
+  (restart-server))
 
 (defn test []
   (eftest/run-tests (eftest/find-tests "test")))

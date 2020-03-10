@@ -27,9 +27,10 @@
                             :headers     {"accept" "application/json"}
                             :form-params form-params}))))
 
-(defn send-message-dev [params api-key user-key]
+(defn send-message-mock [params api-key user-key]
   (log/debug "SENDING NOTIFICATION")
-  (log/debug (clojure.pprint/pprint params)))
+  (log/debug (clojure.pprint/pprint params))
+  {:status 200})
 
 (defn notify! [movies send-message]
   (let [should-send? (pos? (count movies))

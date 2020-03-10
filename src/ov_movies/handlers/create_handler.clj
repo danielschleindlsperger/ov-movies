@@ -6,7 +6,7 @@
             [ov-movies.handlers.crawl :refer [crawl-handler]]
             [ov-movies.handlers.upcoming-movies :refer [upcoming-movies-handler]]
             [ov-movies.handlers.blacklist-movie :refer [blacklist-movie-handler]]
-            [ov-movies.crawl.notification :refer [send-message]])
+            [ov-movies.crawl.notification :refer [send-message send-message-mock]])
   (:import [java.util Base64]))
 
 ;; Middleware
@@ -17,9 +17,10 @@
 
 (defn wrap-message-sender [handler config]
   (let [api-key (-> config :pushover :api-key)
-        user-key (-> config :pushover :user-key)]
+        user-key (-> config :pushover :user-key)
+        send (if (= "dev" (:env config)) send-message-mock send-message)]
     (fn [req]
-      (handler (assoc req :send-message (fn [params] (send-message params api-key user-key)))))))
+      (handler (assoc req :send-message (fn [params] (send params api-key user-key)))))))
 
 (defn wrap-passphrase [handler passphrase]
   (fn [req]
