@@ -32,19 +32,30 @@ The application is split up into two "processes". The crawler and the web app.
 - Blacklist a movie (hide from user)
 - List all upcoming screenings
 
-#### Endpoints
+### Endpoints
 
-##### `/`
+#### `/`
 
 Overview page with future screenings of OV movies.
 
-##### `/crawl`
+#### `/crawl`
 
 Trigger a crawl of the cineplex website.
 
-##### `/blacklist/:movie-id`
+#### `/blacklist/:movie-id`
 
 Hides a movie from future notifications.
+
+### SaaS
+
+The external services I used.
+
+- [Heroku](https://heroku.com)
+- [ElephantSQL](https://www.elephantsql.com/)
+- [Pushover](https://pushover.net/)
+- [IFTTT](https://ifttt.com/my_applets)
+- [The Movie DB](https://www.themoviedb.org/)
+
 
 ## Database
 
