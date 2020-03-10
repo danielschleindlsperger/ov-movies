@@ -1,6 +1,6 @@
 (ns ov-movies.web-server
   (:require [org.httpkit.server :refer [run-server]]
-            [ov-movies.handlers :refer [create-handler]]
+            [ov-movies.handlers.create-handler :refer [create-handler]]
             [ov-movies.config :refer [config]]
             [taoensso.timbre :as log]))
 
