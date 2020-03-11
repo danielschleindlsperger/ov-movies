@@ -1,14 +1,9 @@
 (ns ov-movies.crawl.scrape
   (:require
-    [ov-movies.movie :as movie]
-    [clojure.spec.alpha :as s]
-    [clojure.spec.gen.alpha :as gen]
     [clojure.string :as str]
     [hickory.core :refer [parse, as-hickory]]
     [hickory.select :as sel]
     [ov-movies.util :as u]))
-
-(s/conform ::movie/movie {::movie/id "123456"})
 
 (def base-url "https://www.cineplex.de")
 (def overview-url (str base-url "/programm/neufahrn/"))
@@ -45,13 +40,24 @@
   [url]
   (when url (last (re-find #"performance/(.*)/mode/sale" url))))
 
+(defn inner-text
+  "Receives a hickory node and returns it's direct content as a string.
+  Trims all content text nodes.
+  Can return an empty string."
+  [node]
+  (->> node :content (filter string?) (map str/trim) str/join))
+
 (defn title
   "Parses a movies title from a detail pages hickory HTML."
   [detail-page]
   (let [h1 (first (sel/select (sel/tag :h1) detail-page))
-        text (filter string? (:content h1))
-        title (str/join (map str/trim text))]
+        title (inner-text h1)]
     (when-not (str/blank? title) title)))
+
+(defn description [detail-page]
+  (let [node (first (sel/select (sel/class "movie-schedule--description-text") detail-page))
+        description (inner-text node)]
+    (when-not (str/blank? description) description)))
 
 (defn id-from-canonical
   "Takes HTML and returns the movie id parsed from the canonical url."
@@ -80,14 +86,15 @@
         time (-> time-el :content first str/trim (str/replace #":" "-"))
         url (-> show :attrs :href)]
     {:date (str date "-" time)
-     :id (parse-screening-id url)}))
+     :id   (parse-screening-id url)}))
 
 (defn parse-movie
   "Takes the HTML of a movie page and returns a parsed movie with :title :poster and a vector of :original-dates"
   [html]
   (let [hick-html (html->hickory html)]
-    {:id (id-from-canonical hick-html)
+    {:id             (id-from-canonical hick-html)
      :title          (title hick-html)
+     :description    (description hick-html)
      :poster         (poster-image hick-html)
      :original-dates (map screening (filter original? (find-show hick-html)))}))
 

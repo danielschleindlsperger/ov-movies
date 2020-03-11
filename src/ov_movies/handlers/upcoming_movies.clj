@@ -3,7 +3,6 @@
             [ov-movies.config :refer [config]]
             [ov-movies.util :refer [format-date]]
             [ov-movies.movie :refer [get-movies-with-upcoming-screenings]]
-            [ov-movies.movie-database :refer [get-movie-details]]
             [ov-movies.handlers.util :refer [ok]]))
 
 (defn- render-upcoming-movies [upcoming-movies base-url]
@@ -21,6 +20,7 @@
               [:section.mt-12
                [:img {:src (:poster movie) :alt (:title movie) :style "max-width: 300px;"}]
                [:h1.mt-6.text-2xl.font-bold (:title movie)]
+               [:p.mt-2 (:description movie)]
                [:ul.font-mono.mt-2
                 (for [screening (:screenings movie)]
                   [:li.mt-2 (format-date (:date screening))])]

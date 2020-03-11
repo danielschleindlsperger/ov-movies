@@ -17,6 +17,7 @@
   (let [html (slurp (resource "test/bad-boys-for-life.html"))
         expected {:id             "267153"
                   :title          "Bad Boys for Life"
+                  :description    "Die Bad Boys Mike Lowrey (Will Smith) und Marcus Burnett (Martin\n        Lawrence) sind gemeinsam zurück für einen letzten großen Ritt in der mit Spannung erwarteten Actionkomödie BAD\n        BOYS FOR LIFE. (Quelle: Verleih)"
                   :poster         "https://cdn.cineplex.de/_imageserver/340f267153.jpg"
                   :original-dates [{:date "2020-01-22-21-55" :id "E1DE9000023AIYWYCE"}
                                    {:date "2020-01-23-22-10" :id "EDFE9000023AIYWYCE"}
@@ -31,6 +32,7 @@
     (testing "does not explode with bad input"
       (is (= {:id             nil
               :title          nil
+              :description    nil
               :poster         nil
               :original-dates []} (parse-movie ""))))))
 
