@@ -3,7 +3,14 @@
             [ov-movies.config :refer [config]]
             [ov-movies.util :refer [format-date]]
             [ov-movies.movie :refer [get-movies-with-upcoming-screenings]]
-            [ov-movies.handlers.util :refer [ok]]))
+            [ov-movies.handlers.util :refer [ok]])
+  (:import [java.net URLEncoder]
+           [java.nio.charset StandardCharsets]))
+
+(defn url-encode
+  [s]
+  {:pre [(string? s)]}
+  (URLEncoder/encode s (str StandardCharsets/UTF_8)))
 
 (defn- render-upcoming-movies [upcoming-movies base-url]
   (html5 {:lang "en"}
@@ -21,11 +28,15 @@
                [:img {:src (:poster movie) :alt (:title movie) :style "max-width: 300px;"}]
                [:h1.mt-6.text-2xl.font-bold (:title movie)]
                [:p.mt-2 (:description movie)]
-               [:ul.font-mono.mt-2
+               [:a.px-4.py-2.mt-4.inline-block.bg-gray-800.text-gray-100.font-semibold.rounded.shadow-md
+                {:href(str "https://duckduckgo.com/?q=imdb+" (url-encode (:title movie)))}
+                "Research movie"]
+               [:h2.mt-8.text-xl.font-bold "Dates"]
+               [:ul.font-mono.mt-4
                 (for [screening (:screenings movie)]
                   [:li.mt-2 (format-date (:date screening))])]
-               [:a.px-4.py-2.mt-4.inline-block.bg-gray-800.text-gray-100.font-semibold.rounded.shadow-md
-                {:href (str base-url "/blacklist/" (:id movie))} "Blacklist"]])]]]))
+               [:a.px-4.py-2.mt-4.inline-block.bg-red-700.text-gray-100.font-semibold.rounded.shadow-md
+                {:href (str base-url "/blacklist/" (:id movie))} "Block movie"]])]]]))
 
 (defn upcoming-movies-handler [{:keys [db]}]
   (let [upcoming-movies (get-movies-with-upcoming-screenings db)

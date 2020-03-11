@@ -10,10 +10,12 @@ It will then persist any entries that were not previously scraped in a database 
 ## Helpful Commands
 
 ```bash
-lein repl :headless # start leiningen repl in headless mode to connect to (e.g. from Cursive)
+$ lein repl :headless # start leiningen repl in headless mode to connect to (e.g. from Cursive)
 
 (dev) # switch to dev namespace
 (dev/restart) # restart web server
+
+$ lein kibit --replace --interactive # run kibit with interactive autofixer
 ```
 
 ## Architecture
