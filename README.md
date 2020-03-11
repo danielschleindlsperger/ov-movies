@@ -44,6 +44,10 @@ Overview page with future screenings of OV movies.
 
 Trigger a crawl of the cineplex website.
 
+##### Parameters
+
+- `?passphrase=$PASSPHRASE`
+
 #### `/blacklist/:movie-id`
 
 Hides a movie from future notifications.
