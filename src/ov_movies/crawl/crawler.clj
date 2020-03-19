@@ -9,7 +9,7 @@
 (defn crawl! [db]
   (let [{movies     :movies
          screenings :screenings} (scrape!)
-        inserted-movies  (when-not (empty? movies) (insert-movies! db movies))
-        inserted-screenings (when-not (empty? screenings) (insert-screenings! db screenings))]
+        inserted-movies  (when (seq movies) (insert-movies! db movies))
+        inserted-screenings (when (seq screenings) (insert-screenings! db screenings))]
     (log/info "inserted" (count inserted-movies) "new movies")
     (log/info "inserted" (count inserted-screenings) "new screenings")))

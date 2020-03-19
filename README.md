@@ -60,8 +60,6 @@ The external services I used.
 - [ElephantSQL](https://www.elephantsql.com/)
 - [Pushover](https://pushover.net/)
 - [IFTTT](https://ifttt.com/my_applets)
-- [The Movie DB](https://www.themoviedb.org/)
-
 
 ## Database
 
