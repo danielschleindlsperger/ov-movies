@@ -13,11 +13,10 @@
           (let [upcoming-movies (get-movies-with-upcoming-screenings db)]
             (log/info "sending notifications...")
             (let [res (notify! upcoming-movies send-message)]
-              (if (<= 300 (:status res))
+              (if (and (some? res) (<= 300 (:status res)))
                 (do (log/error (:body res))
                     (server-error "something went wrong sending out the notifications"))
                 (ok "Crawled movies successfully!")))))
       {:status  401
        :body    "invalid passphrase provided."
        :headers {"content-type" "text/plain"}})))
-
