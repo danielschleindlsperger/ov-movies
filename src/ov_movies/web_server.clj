@@ -17,5 +17,5 @@
     (reset! server nil)))
 
 (defn restart-server []
-  (do (stop-server)
-      (start-server)))
+  (stop-server)
+  (start-server))

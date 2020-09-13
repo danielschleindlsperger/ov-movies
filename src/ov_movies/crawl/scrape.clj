@@ -1,9 +1,9 @@
 (ns ov-movies.crawl.scrape
   (:require
-    [clojure.string :as str]
-    [hickory.core :refer [parse, as-hickory]]
-    [hickory.select :as sel]
-    [ov-movies.util :as u]))
+   [clojure.string :as str]
+   [hickory.core :refer [parse, as-hickory]]
+   [hickory.select :as sel]
+   [ov-movies.util :as u]))
 
 (def base-url "https://www.cineplex.de")
 (def overview-url (str base-url "/programm/neufahrn/"))
@@ -79,8 +79,9 @@
   (-> (sel/select (sel/descendant (sel/find-in-text #"Original")) show)
       count (not= 0)))
 
-(defn screening [show]
+(defn screening
   "Takes a showtime schedule link and parses the :date and :id."
+  [show]
   (let [time-el (first (sel/select (sel/tag :time) show))
         date (-> time-el :attrs :datetime)
         time (-> time-el :content first str/trim (str/replace #":" "-"))
