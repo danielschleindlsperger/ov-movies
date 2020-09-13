@@ -28,7 +28,10 @@
 
                  ;; html
                  [hiccup "1.0.5"]
-                 [hickory "0.7.1"]]
+                 [hickory "0.7.1"]
+
+                ;; linting 
+                 [clj-kondo "RELEASE"]]
   :main ^:skip-aot ov-movies.main
   :resource-paths ["resources" "target/resources"]
   :target-path "target/%s"
@@ -39,9 +42,8 @@
              :profiles/dev {}
              :project/dev  {:source-paths   ["dev/src"]
                             :resource-paths ["dev/resources"]
-                            :dependencies   [[eftest "0.5.7"]]}
-             :user {:dependencies [[clj-kondo "RELEASE"]]
-                    :aliases {"clj-kondo" ["run" "-m" "clj-kondo.main"]}}}
+                            :dependencies   [[eftest "0.5.7"]]}}
+  :aliases {"clj-kondo" ["run" "-m" "clj-kondo.main"]}
   :plugins [[migratus-lein "0.7.2"]
             [lein-kibit "0.1.8"]]
   :middleware []
