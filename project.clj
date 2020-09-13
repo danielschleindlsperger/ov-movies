@@ -39,7 +39,9 @@
              :profiles/dev {}
              :project/dev  {:source-paths   ["dev/src"]
                             :resource-paths ["dev/resources"]
-                            :dependencies   [[eftest "0.5.7"]]}}
+                            :dependencies   [[eftest "0.5.7"]]}
+             :user {:dependencies [[clj-kondo "RELEASE"]]
+                    :aliases {"clj-kondo" ["run" "-m" "clj-kondo.main"]}}}
   :plugins [[migratus-lein "0.7.2"]
             [lein-kibit "0.1.8"]]
   :middleware []

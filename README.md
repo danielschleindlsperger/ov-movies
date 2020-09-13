@@ -16,6 +16,8 @@ $ lein repl :headless # start leiningen repl in headless mode to connect to (e.g
 (dev/restart) # restart web server
 
 $ lein kibit --replace --interactive # run kibit with interactive autofixer
+
+$lein clj-kondo --lint src # run clj-kondo linter
 ```
 
 ## Architecture
@@ -83,20 +85,20 @@ I'm currently using a free database on [elephantsql.com/](https://www.elephantsq
 
 ## Environment Variables
 
-| Name | Usage | 
-| ------------- |-------------|
-| BASE_URL | HTTPS URL of the application |
-| PASSPHRASE | User entered passphrase to protected endpoints |
-| DATABASE_URL | JDBC URL to Postgres database |
-| PORT | Port the application will run on. |
-| PUSHOVER_USER_KEY  | |
-| PUSHOVER_API_KEY  | |
+| Name              | Usage                                          |
+| ----------------- | ---------------------------------------------- |
+| BASE_URL          | HTTPS URL of the application                   |
+| PASSPHRASE        | User entered passphrase to protected endpoints |
+| DATABASE_URL      | JDBC URL to Postgres database                  |
+| PORT              | Port the application will run on.              |
+| PUSHOVER_USER_KEY |                                                |
+| PUSHOVER_API_KEY  |                                                |
 
 ## Deployment
 
-````bash
+```bash
 git push heroku master
-```` 
+```
 
 ## Roadmap (TODOs)
 
