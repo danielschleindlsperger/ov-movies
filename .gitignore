@@ -16,4 +16,5 @@ pom.xml.asc
 /.dir-locals.el
 /profiles.clj
 /dev/resources/local.edn
+/dev/resources/secrets.edn
 /dev/src/local.clj

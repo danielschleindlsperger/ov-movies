@@ -22,6 +22,11 @@
     (fn [req]
       (handler (assoc req :send-message (fn [params] (send params api-key user-key)))))))
 
+(defn wrap-movie-db [handler config]
+  (let [api-key (-> config :movie-db :api-key)]
+    (fn [req]
+      (handler (assoc req :movie-db-api-key api-key)))))
+
 (defn wrap-passphrase [handler passphrase]
   (fn [req]
     (handler (assoc req :passphrase passphrase))))
@@ -52,7 +57,8 @@
   (ring/ring-handler (ring/router [["/crawl" {:get {:middleware [[params/wrap-params]
                                                                  [wrap-passphrase (:passphrase config)]
                                                                  [wrap-db db]
-                                                                 [wrap-message-sender config]]
+                                                                 [wrap-message-sender config]
+                                                                 [wrap-movie-db config]]
                                                     :handler    crawl-handler}}]
                                    ["/blacklist/:id" {:get {:middleware [[wrap-basic-auth (:passphrase config)] [wrap-db db]]
                                                             :handler    blacklist-movie-handler}}]

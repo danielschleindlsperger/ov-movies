@@ -5,11 +5,11 @@
             [ov-movies.movie :refer [get-movies-with-upcoming-screenings]]
             [ov-movies.handlers.util :refer [ok server-error]]))
 
-(defn crawl-handler [{:keys [db send-message passphrase query-params]}]
+(defn crawl-handler [{:keys [db movie-db-api-key send-message passphrase query-params]}]
   (let [supplied-passphrase (get query-params "passphrase")]
     (if (= supplied-passphrase passphrase)
       (do (log/info "Starting to crawl...")
-          (crawl! db)
+          (crawl! db movie-db-api-key)
           (let [upcoming-movies (get-movies-with-upcoming-screenings db)]
             (log/info "sending notifications...")
             (let [res (notify! upcoming-movies send-message)]
