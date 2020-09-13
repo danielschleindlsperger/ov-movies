@@ -3,7 +3,7 @@
    [clojure.string :as str]
    [hickory.core :refer [parse, as-hickory]]
    [hickory.select :as sel]
-   [ov-movies.util :as u :refer [hick-inner-text]]))
+   [ov-movies.util :as u :refer [parse-date hick-inner-text]]))
 
 (def base-url "https://www.cineplex.de")
 (def overview-url (str base-url "/programm/germering/"))
@@ -19,7 +19,6 @@
 
 ;;;
 ;;; Detail page: Load and parse a detail page and retrieve all screening of the movie.
-
 
 (defn- parse-movie-id
   "Takes a web page as a hickory data structure and finds the cineplex id."
@@ -66,7 +65,7 @@
         date (-> time-el :attrs :datetime)
         time (-> time-el :content first str/trim (str/replace #":" "-"))
         url (-> show :attrs :href)]
-    {:date (str date "-" time)
+    {:date (parse-date (str date "-" time))
      :id   (parse-screening-id url)
      :original? (original? show)}))
 

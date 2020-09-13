@@ -1,5 +1,6 @@
 CREATE TABLE screenings (
-    id VARCHAR(255) PRIMARY KEY NOT NULL, -- cineplex id
-    movie_id varchar(255) references movies(id) ON DELETE CASCADE,
-    date TIMESTAMP WITH TIME ZONE NOT NULL
+    id VARCHAR(255) PRIMARY KEY NOT NULL,
+    movie_id VARCHAR(255) REFERENCES movies(id) ON DELETE CASCADE,
+    date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    "original?" BOOLEAN NOT NULL
 );

@@ -29,6 +29,8 @@
   (let [instant (Instant/ofEpochMilli (.getTime timestamp))]
     (OffsetDateTime/ofInstant instant (:timezone config))))
 
+;; Formatting
+
 (defn date-diff [n]
   (cond (<= n 0) "today"
         (<= n 1) "tomorrow"
@@ -42,9 +44,7 @@
         in-days (.until (.toLocalDate now) (.toLocalDate date) ChronoUnit/DAYS)]
     (format "%s (%s)" (.format date formatter) (date-diff in-days))))
 
-(defn find-first
-  [f coll]
-  (first (filter f coll)))
+;; hickory html parsing
 
 (defn hick-inner-text
   "Receives a hickory node and returns it's direct content as a string.
@@ -53,3 +53,9 @@
   [node]
   (let [text (->> node :content (filter string?) (map str/trim) (str/join ""))]
     (when-not (str/blank? text) text)))
+
+;; misc
+
+(defn find-first
+  [f coll]
+  (first (filter f coll)))

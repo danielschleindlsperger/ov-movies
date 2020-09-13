@@ -26,7 +26,8 @@
                :values      screenings
                :on-conflict [:id]
                :do-nothing  []
-               :returning   [:*]}))
+               :returning   [:*]}
+              :quoting :ansi))
 
 (defn insert-screenings! [db screenings]
   (jdbc/execute! db (insert-screenings-query screenings) db-opts))

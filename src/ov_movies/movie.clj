@@ -4,7 +4,6 @@
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :as str]
             [next.jdbc :as jdbc]
-            [next.jdbc.sql :as sql]
             [honeysql.helpers]
             [honeysql-postgres.format]
             [honeysql.format :refer [format] :rename {format sql-format}]
@@ -36,13 +35,15 @@ FROM (
                :values      movies
                :on-conflict [:id]
                :do-nothing  []
-               :returning   [:*]}))
+               :returning   [:*]}
+              :quoting :ansi))
 
 (defn blacklist-movie-query [id]
   (sql-format {:update :movies
                :set {:blacklisted true}
                :where [:= :id id]
-               :returning [:*]}))
+               :returning [:*]}
+              :quoting :ansi))
 
 (defn parse-dates [k v] (if (= k :date) (parse-zoned-date-time v) v))
 (defn parse-pg-movie [pg-obj]
@@ -51,6 +52,8 @@ FROM (
 (defn get-movies-with-upcoming-screenings [db]
   (map parse-pg-movie (jdbc/execute! db [get-movies-query])))
 
-(defn insert-movies! [db movies] (jdbc/execute! db (insert-movies-query movies) db-opts))
+(defn insert-movies! [db movies]
+  (let [stmt (insert-movies-query movies)]
+    (jdbc/execute! db stmt db-opts)))
 
 (defn blacklist-movie! [db {id :id}] (jdbc/execute! db (blacklist-movie-query id) db-opts))

@@ -27,7 +27,7 @@
                             :headers     {"accept" "application/json"}
                             :form-params form-params}))))
 
-(defn send-message-mock [params api-key user-key]
+(defn send-message-mock [params _api-key _user-key]
   (log/debug "SENDING NOTIFICATION")
   (log/debug (clojure.pprint/pprint params))
   {:status 200})
