@@ -8,6 +8,10 @@
                  [org.clojure/test.check "0.9.0"]           ;; This should actually be a "dev" dependency
                  [org.clojure/data.json "0.2.7"]
 
+
+                 ;; util
+                 [camel-snake-kebab "0.4.1"]
+
                  ;; http
                  [http-kit "2.3.0"]
                  [metosin/reitit-ring "0.4.2"]
@@ -20,7 +24,7 @@
                  [aero "1.1.6"]
 
                  ;; DB stuff
-                 [org.clojure/java.jdbc "0.7.11"]
+                 [seancorfield/next.jdbc "1.1.588"]
                  [org.postgresql/postgresql "42.2.2"]
                  [honeysql "0.9.8"]
                  [nilenso/honeysql-postgres "0.2.6"]

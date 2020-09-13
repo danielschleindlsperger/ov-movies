@@ -1,19 +1,20 @@
 (ns ov-movies.screening
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
-            [clojure.java.jdbc :as jdbc]
+            [next.jdbc :as jdbc]
             [honeysql.helpers]
             [honeysql-postgres.format]
-            [honeysql.format :as sql])
+            [honeysql.format :as sql]
+            [ov-movies.database :refer [db-opts]])
   (:import [java.time OffsetDateTime ZonedDateTime]))
 
 
 (s/def ::id (s/with-gen (s/and string? #(-> % count (> 2)))
-                        #(gen/string-alphanumeric)))
+              #(gen/string-alphanumeric)))
 
 (s/def ::date (s/with-gen #(= (type %) OffsetDateTime)
                           ;; TODO: generate, don't use "now()"
-                          #(gen/fmap (fn [_] (.toOffsetDateTime (ZonedDateTime/now))) (s/gen any?))))
+                #(gen/fmap (fn [_] (.toOffsetDateTime (ZonedDateTime/now))) (s/gen any?))))
 
 (s/def ::movie_id (s/and string? #(-> % count (> 2))))
 
@@ -28,4 +29,4 @@
                :returning   [:*]}))
 
 (defn insert-screenings! [db screenings]
-  (jdbc/query db (insert-screenings-query screenings)))
+  (jdbc/execute! db (insert-screenings-query screenings) db-opts))
