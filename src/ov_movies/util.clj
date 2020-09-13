@@ -1,9 +1,10 @@
 (ns ov-movies.util
+  (:require [clojure.string :as str]
+            [ov-movies.config :refer [config]])
   (:import [java.time OffsetDateTime Instant ZonedDateTime]
            [java.time.format DateTimeFormatter]
            [java.time.temporal ChronoUnit]
-           [java.sql Timestamp])
-  (:require [ov-movies.config :refer [config]]))
+           [java.sql Timestamp]))
 
 (defn parse-date
   "Parses a date in the format YYYY-MM-dd-HH-mm to a java `OffsetDateTime`"
@@ -44,3 +45,11 @@
 (defn find-first
   [f coll]
   (first (filter f coll)))
+
+(defn hick-inner-text
+  "Receives a hickory node and returns it's direct content as a string.
+  Trims all content text nodes.
+  Cannot return an empty string. Returns nil instead."
+  [node]
+  (let [text (->> node :content (filter string?) (map str/trim) (str/join ""))]
+    (when-not (str/blank? text) text)))
