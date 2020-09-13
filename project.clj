@@ -25,8 +25,8 @@
 
                  ;; DB stuff
                  [seancorfield/next.jdbc "1.1.588"]
-                 [org.postgresql/postgresql "42.2.2"]
-                 [honeysql "0.9.8"]
+                 [org.postgresql/postgresql "42.2.16"]
+                 [honeysql "1.0.444"]
                  [nilenso/honeysql-postgres "0.2.6"]
                  [migratus "1.2.7"]
 
