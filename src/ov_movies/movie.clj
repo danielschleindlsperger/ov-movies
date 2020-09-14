@@ -1,13 +1,12 @@
 (ns ov-movies.movie
-  (:require [ov-movies.util :refer [parse-zoned-date-time]]
-            [clojure.spec.alpha :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]
             [clojure.string :as str]
             [next.jdbc :as jdbc]
+            [honeysql.types :refer [raw]]
             [honeysql.helpers]
             [honeysql-postgres.format]
             [honeysql.format :refer [format] :rename {format sql-format}]
-            [clojure.data.json :as json]
             [ov-movies.database :refer [db-opts]]))
 
 (defn rand-id [] (str/join (map (fn [_] (rand-int 10)) (range 6))))
@@ -22,13 +21,6 @@
 
 (s/def ::movie (s/keys :req [::id ::title]
                        :opt [::poster]))
-
-(def get-movies-query "
-SELECT row_to_json(mov) AS movie
-FROM (
-  SELECT m.*,
-    (SELECT json_agg(scr) FROM (SELECT * FROM screenings WHERE movie_id = m.id AND date > now()) scr) AS screenings
-    FROM movies AS m) mov WHERE json_typeof(screenings) != 'null' AND blacklisted = false;")
 
 (defn insert-movies-query [movies]
   (sql-format {:insert-into :movies
@@ -45,12 +37,21 @@ FROM (
                :returning [:*]}
               :quoting :ansi))
 
-(defn parse-dates [k v] (if (= k :date) (parse-zoned-date-time v) v))
-(defn parse-pg-movie [pg-obj]
-  (-> pg-obj :movie .getValue (json/read-str :key-fn keyword :value-fn parse-dates)))
+(sql-format {:select [:*]
+             :from [:screenings]
+             :where [:and [:in :movie_id (map :movie-id [{:movie-id "foo"}])] [:= :blacklisted false]]})
 
 (defn get-movies-with-upcoming-screenings [db]
-  (map parse-pg-movie (jdbc/execute! db [get-movies-query])))
+  (jdbc/with-transaction [tx db]
+    (let [upcoming-screenings (jdbc/execute! tx (sql-format {:select [:*]
+                                                             :from [:screenings]
+                                                             :where [:> :date (raw "now()")]}) db-opts)
+          upcoming-movies (jdbc/execute! tx (sql-format {:select [:*]
+                                                         :from [:movies]
+                                                         :where [:and [:in :id (distinct (map :movie-id upcoming-screenings))] [:= :blacklisted false]]
+                                                         :order-by [[:title :asc]]}) db-opts)
+          screenings-by-movie-id (group-by :movie-id upcoming-screenings)]
+      (map (fn [movie] (assoc movie :screenings (get screenings-by-movie-id (:id movie) []))) upcoming-movies))))
 
 (defn insert-movies! [db movies]
   (let [stmt (insert-movies-query movies)]

@@ -12,7 +12,7 @@
 
 (defn- add-movie-metadata [api-key movie]
   (let [meta-data (movie-api/search-movie api-key (:title movie))
-        original-lang (get meta-data :original-language "N/A")]
+        original-lang (get meta-data :original-language)]
     (assoc movie :original-lang original-lang)))
 
 (def ^:private cinemas [[:cineplex-germering cineplex-germering/scrape!]

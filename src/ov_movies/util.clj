@@ -3,8 +3,7 @@
             [ov-movies.config :refer [config]])
   (:import [java.time OffsetDateTime Instant ZonedDateTime]
            [java.time.format DateTimeFormatter]
-           [java.time.temporal ChronoUnit]
-           [java.sql Timestamp]))
+           [java.time.temporal ChronoUnit]))
 
 (defn parse-date
   "Parses a date in the format YYYY-MM-dd-HH-mm to a java `OffsetDateTime`"
@@ -12,22 +11,6 @@
   (let [format (.withZone (DateTimeFormatter/ofPattern "uuuu-MM-dd-HH-mm") (:timezone config))
         zoned-date (ZonedDateTime/parse s format)]
     (.toOffsetDateTime zoned-date)))
-
-(defn offset-date-time->iso-offset-date-time-string
-  "Stringify date to ISO-8601 compatible JSON datetime string"
-  [^OffsetDateTime date]
-  (.format date DateTimeFormatter/ISO_OFFSET_DATE_TIME))
-
-(defn parse-zoned-date-time
-  [s]
-  (let [zoned-date (ZonedDateTime/parse s DateTimeFormatter/ISO_ZONED_DATE_TIME)]
-    (.toOffsetDateTime zoned-date)))
-
-(defn sqltimestamp->offsetdatetime
-  "Converts a java.sql.Timestamp to a java.date.OffsetDateTime with timezone Europe/Berlin"
-  [^Timestamp timestamp]
-  (let [instant (Instant/ofEpochMilli (.getTime timestamp))]
-    (OffsetDateTime/ofInstant instant (:timezone config))))
 
 ;; Formatting
 
@@ -38,11 +21,13 @@
 
 (def formatter (DateTimeFormatter/ofPattern "E dd.LL. HH:mm"))
 (defn format-date
-  "Format a java.time.OffsetDateTime to a user readable string."
-  [date]
+  "Format a java.time.Instant to a user readable string."
+  [^Instant instant]
   (let [now (OffsetDateTime/now (:timezone config))
-        in-days (.until (.toLocalDate now) (.toLocalDate date) ChronoUnit/DAYS)]
-    (format "%s (%s)" (.format date formatter) (date-diff in-days))))
+        then-offset (-> (:timezone config) .getRules (.getOffset instant))
+        then (.atOffset instant then-offset)
+        in-days (.until (.toLocalDate now) (.toLocalDate then) ChronoUnit/DAYS)]
+    (format "%s (%s)" (.format then formatter) (date-diff in-days))))
 
 ;; hickory html parsing
 
