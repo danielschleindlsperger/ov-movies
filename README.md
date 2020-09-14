@@ -1,10 +1,10 @@
 # ov-movies
 
-Simple application to crawl the website of my local theatre and send me updates about OV films.
+Simple application to crawl the website of my local theatres and send me updates about OV films.
 
 ## How it works
 
-The application will scrape the Cineplex website in an interval (a few days).
+The application will scrape the cinemas' websites in an interval (a few days).
 It will then persist any entries that were not previously scraped in a database and notify me via email about these new entries.
 
 ## Helpful Commands
@@ -56,10 +56,8 @@ Hides a movie from future notifications.
 
 ### SaaS
 
-The external services I used.
+The external services used:
 
-- [Heroku](https://heroku.com)
-- [ElephantSQL](https://www.elephantsql.com/)
 - [Pushover](https://pushover.net/)
 - [IFTTT](https://ifttt.com/my_applets)
 
@@ -70,10 +68,6 @@ Postgres
 ### Development
 
 `docker-compose up -d` for testing.
-
-### Production
-
-I'm currently using a free database on [elephantsql.com/](https://www.elephantsql.com/).
 
 ### Migrations
 
@@ -97,9 +91,7 @@ I'm currently using a free database on [elephantsql.com/](https://www.elephantsq
 
 ## Deployment
 
-```bash
-git push heroku master
-```
+The application is deployed continuously on every successful `master` build.
 
 ## Roadmap (TODOs)
 
