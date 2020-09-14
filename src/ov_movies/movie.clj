@@ -46,10 +46,12 @@
     (let [upcoming-screenings (jdbc/execute! tx (sql-format {:select [:*]
                                                              :from [:screenings]
                                                              :where [:> :date (raw "now()")]}) db-opts)
-          upcoming-movies (jdbc/execute! tx (sql-format {:select [:*]
-                                                         :from [:movies]
-                                                         :where [:and [:in :id (distinct (map :movie-id upcoming-screenings))] [:= :blacklisted false]]
-                                                         :order-by [[:title :asc]]}) db-opts)
+          upcoming-movies (if (empty? upcoming-screenings)
+                            []
+                            (jdbc/execute! tx (sql-format {:select [:*]
+                                                           :from [:movies]
+                                                           :where [:and [:in :id (distinct (map :movie-id upcoming-screenings))] [:= :blacklisted false]]
+                                                           :order-by [[:title :asc]]}) db-opts))
           screenings-by-movie-id (group-by :movie-id upcoming-screenings)]
       (map (fn [movie] (assoc movie :screenings (get screenings-by-movie-id (:id movie) []))) upcoming-movies))))
 
