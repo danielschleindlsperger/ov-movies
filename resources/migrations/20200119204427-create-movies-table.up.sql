@@ -4,6 +4,5 @@ CREATE TABLE movies (
     description TEXT,
     poster TEXT,
     original_lang VARCHAR(10),
-    cinema VARCHAR(255) NOT NULL,
     blacklisted BOOLEAN DEFAULT false
 );

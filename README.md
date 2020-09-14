@@ -103,10 +103,6 @@ git push heroku master
 
 ## Roadmap (TODOs)
 
-- Find IMDB id for all movies and use that to save the movie.
-  - Add the :cinema identifier to the screening
-  - This will remove redundancies and enable a nicer looking UI
-  - In case we can't determine a movie: Drop it?
 - Add filter capabilities:
   - Filter by cinema: Multi-select
   - Only show Originals

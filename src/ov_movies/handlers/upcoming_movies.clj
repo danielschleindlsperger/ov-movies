@@ -39,16 +39,16 @@
               [:section.mt-12
                [:img {:src (:poster movie) :alt (:title movie) :loading "lazy" :style "max-width: 300px;"}]
                [:h1.text-2xl.font-bold.mt-6 (:title movie)]
-               [:div.inline-block.bg-gray-800.font-bold.text-gray-100.mt-2.mr-2.px-1.text-xs.rounded.whitespace-no-wrap (fmt-cinema (:cinema movie))]
                [:div.mt-2 "Originalsprache: " (locale (:original-lang movie))]
                [:p.mt-2 (:description movie)]
-
-               [:h2.mt-8.text-xl.font-bold "Dates"]
-               [:ul.font-mono.mt-4
-                (for [screening (:screenings movie)]
-                  [:li.mt-2
-                   (format-date (:date screening))
-                   (when (:original? screening) [:div.inline-block.bg-red-800.font-bold.text-gray-100.ml-2.px-1.text-xs.rounded.whitespace-no-wrap.uppercase "Originalversion"])])]
+               (for [[cinema screenings] (group-by :cinema (:screenings movie))]
+                 [:section
+                  [:h1.mt-8.text-xl.font-bold (fmt-cinema cinema)]
+                  [:ul.font-mono.mt-4
+                   (for [screening screenings]
+                     [:li.mt-2
+                      (format-date (:date screening))
+                      (when (:original? screening) [:div.inline-block.bg-red-800.font-bold.text-gray-100.ml-2.px-1.text-xs.rounded.whitespace-no-wrap.uppercase "Originalversion"])])]])
                [:div.flex
                 [:a.px-4.py-2.mt-4.inline-block.bg-red-700.text-gray-100.font-semibold.rounded.shadow-md
                  {:href (str base-url "/blacklist/" (:id movie))} "Hide movie forever"]

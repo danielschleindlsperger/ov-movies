@@ -7,24 +7,28 @@
             [ov-movies.movie-api :as movie-api]
             [taoensso.timbre :as log]))
 
-(defn- assoc-movie [movie]
-  (map #(assoc % :movie-id (:id movie)) (:screenings movie)))
-
 (defn- add-movie-metadata [api-key movie]
   (let [meta-data (movie-api/search-movie api-key (:title movie))
-        original-lang (get meta-data :original-language)]
-    (assoc movie :original-lang original-lang)))
+        original-lang (:original-language meta-data)
+        id (:id meta-data)
+        screenings (map #(assoc % :movie-id id) (:screenings movie))]
+    (assoc movie :original-lang original-lang :id id :screenings screenings)))
 
 (def ^:private cinemas [[:cineplex-germering cineplex-germering/scrape!]
                         [:cineplex-neufahrn cineplex-neufahrn/scrape!]])
 
 (defn crawl! [db movie-db-api-key]
   (let [movies (->> cinemas
-                    (map (fn [[cinema scrape!]]
-                           (map #(assoc % :cinema (name cinema)) (scrape!))))
+                    (map (fn [[cinema scrape!]] flatten
+                           (map (fn [movie]
+                                  (update movie :screenings #(map (fn [scr]
+                                                                    (assoc scr :cinema (name cinema))) %)))
+                                (scrape!))))
                     flatten
-                    (map #(add-movie-metadata movie-db-api-key %)))
-        screenings (mapcat assoc-movie movies)]
+                    (pmap #(add-movie-metadata movie-db-api-key %))
+                    ;; Movies that are not in "The Movie Database" will be dropped here
+                    (filter :id))
+        screenings (mapcat :screenings movies)]
     (jdbc/with-transaction [tx db]
       (let [new-movies (insert-movies! tx (map #(dissoc % :screenings) movies))
             new-screenings (insert-screenings! tx screenings)]
@@ -35,4 +39,5 @@
   (def config (var-get (requiring-resolve 'ov-movies.config/config)))
   (def ds (get-in config [:database :connection-uri]))
   (def movie-db-api-key (get-in config [:movie-db :api-key]))
-  (time (crawl! ds movie-db-api-key)))
+  (try (time (crawl! ds movie-db-api-key))
+       (catch Exception e (println e))))
