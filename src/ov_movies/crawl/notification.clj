@@ -1,5 +1,5 @@
 (ns ov-movies.crawl.notification
-  (:require [ov-movies.util :refer [find-first format-date]]
+  (:require [ov-movies.util :refer [format-date]]
             [ov-movies.config :refer [config]]
             [org.httpkit.client :as client]
             [clojure.string :as str]
@@ -29,7 +29,7 @@
 
 (defn send-message-mock [params _api-key _user-key]
   (log/debug "SENDING NOTIFICATION")
-  (log/debug (clojure.pprint/pprint params))
+  (log/debug params)
   {:status 200})
 
 (defn notify! [movies send-message]
