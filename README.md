@@ -103,9 +103,5 @@ git push heroku master
 
 ## Roadmap (TODOs)
 
-- Add filter capabilities:
-  - Filter by cinema: Multi-select
-  - Only show Originals
-  - Only show Non-dubbed movies (german and OV)
-- Add more cinemas (Gjkjking, Seefeld, Gauting)
+- Add more cinemas (Gilching, Seefeld, Gauting)
 - Monitoring to detect when a scraper breaks

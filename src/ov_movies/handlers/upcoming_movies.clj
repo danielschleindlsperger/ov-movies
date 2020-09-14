@@ -10,7 +10,7 @@
            [java.nio.charset StandardCharsets]
            [java.util Locale]))
 
-(defn url-encode
+(defn- url-encode
   [s]
   {:pre [(string? s)]}
   (URLEncoder/encode s (str StandardCharsets/UTF_8)))
@@ -27,19 +27,19 @@
 
 (defn- checkbox-multi-select [name options selected-values]
   (let [selected? (fn [x] (contains? (set (ensure-vec selected-values)) x))]
-    [:fieldset.flex.flex-col
+    [:fieldset.flex.flex-col.mt-4
      (for [{:keys [value display-name]} options]
        [:label
-        [:input {:type "checkbox" :name name :value value :checked (selected? value)} display-name]])]))
+        [:input.mr-2 {:type "checkbox" :name name :value value :checked (selected? value)} display-name]])]))
 
 (defn- radio-multi-select [name options selected-value]
-  [:fieldset.flex.flex-col
+  [:fieldset.flex.flex-col.mt-4
    (for [{:keys [value display-name]} options]
      [:label
-      [:input {:type "radio" :name name :value value :checked (= value selected-value)} display-name]])])
+      [:input.mr-2 {:type "radio" :name name :value value :checked (= value selected-value)} display-name]])])
 
-(def default-form-state {"language" "non-dubbed"
-                         "cinema" (map (comp name first) cinemas)})
+(def ^:private default-form-state {"language" "non-dubbed"
+                                   "cinema" (map (comp name first) cinemas)})
 
 (def ^:private cinema-options
   (map (fn [c]
@@ -56,12 +56,15 @@
     :display-name "Alle"}])
 
 (defn- filter-form [form-state]
-  [:form.flex.justify-between.top-0.sticky.bg-white.py-4.shadow-lg
-   (checkbox-multi-select "cinema" cinema-options (get form-state "cinema"))
-   (radio-multi-select "language" language-options (get form-state "language"))
-   [:section
-    [:a.px-4.py-2.ml-4.inline-block.text-gray-800.border.font-semibold.rounded.shadow-md {:href "/"} "Reset"]
-    [:button.px-4.py-2.ml-4.inline-block.bg-gray-800.text-gray-100.font-semibold.rounded.shadow-md "Filter"]]])
+  [:section.flex.justify-center.top-0.left-0.w-screen.sticky.bg-white.mt-4.p-4.shadow-lg
+   {:style "margin-left: -50vw; margin-right: -50vw;"}
+   [:form.md:flex.md:justify-between.w-full.max-w-4xl
+    (checkbox-multi-select "cinema" cinema-options (get form-state "cinema"))
+    (radio-multi-select "language" language-options (get form-state "language"))
+    [:section.flex.items-center.mt-4
+     [:div.flex.justify-end.w-full
+      [:a.px-4.py-2.ml-2.inline-block.text-gray-800.border.font-semibold.rounded.shadow-md {:href "/"} "Reset"]
+      [:button.px-4.py-2.ml-2.inline-block.bg-gray-800.text-gray-100.font-semibold.rounded.shadow-md "Filter"]]]]])
 
 (defn- render-upcoming-movies [upcoming-movies base-url form-state]
   (html5 {:lang "en"}
@@ -72,7 +75,7 @@
           [:link {:href "https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" :rel "stylesheet"}]]
          [:body
           [:main.max-w-2xl.p-4.mx-auto
-           [:h1.text-3xl.text-center.font-bold "Upcoming Movies"]
+           [:h1.text-4xl.text-center.font-bold "Upcoming Movies"]
            (filter-form form-state)
            [:div.mt-12
             (when (empty? upcoming-movies) [:section.mt-12.flex.justify-center
@@ -98,10 +101,21 @@
                  {:href (str "https://duckduckgo.com/?q=imdb+" (url-encode (:title movie)))}
                  "Research movie"]]])]]]))
 
+(defn- filter-movies [movies form-state]
+  (let [lang (get form-state "language")
+        in-selected-location? (fn [_movie screening] (contains? (set (ensure-vec (get form-state "cinema"))) (:cinema screening)))
+        matches-language? (cond
+                            (= lang "non-dubbed") (fn [movie screening] (or (:original? screening) (= "de" (:original-lang movie))))
+                            (= lang "originals-only") (fn [_movie screening] (:original? screening))
+                            :else (constantly true))
+        show-screening? (fn [movie screening] (and (in-selected-location? movie screening) (matches-language? movie screening)))]
+    (filter #(-> % :screenings not-empty)
+            (map (fn [movie] (update movie :screenings #(filter (fn [scr] (show-screening? movie scr)) %))) movies))))
+
 ;; TODO: validate query params
 (defn upcoming-movies-handler [{:keys [db query-params]}]
-  (let [upcoming-movies (get-movies-with-upcoming-screenings db)
+  (let [form-state (if (empty? query-params) default-form-state query-params)
         base-url (-> config :server :base-url)
-        form-state (if (empty? query-params) default-form-state query-params)]
+        upcoming-movies (filter-movies (get-movies-with-upcoming-screenings db) form-state)]
     (ok (render-upcoming-movies upcoming-movies base-url form-state) {"content-type" "text/html"})))
 
