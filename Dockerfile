@@ -5,6 +5,8 @@ WORKDIR /app
 # add deps, change sometimes
 COPY project.clj /app/project.clj
 
+RUN lein deps
+
 # add sources files, change often
 COPY src/ /app/src
 
