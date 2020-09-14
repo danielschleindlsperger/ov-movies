@@ -85,14 +85,15 @@ I'm currently using a free database on [elephantsql.com/](https://www.elephantsq
 
 ## Environment Variables
 
-| Name              | Usage                                          |
-| ----------------- | ---------------------------------------------- |
-| BASE_URL          | HTTPS URL of the application                   |
-| PASSPHRASE        | User entered passphrase to protected endpoints |
-| DATABASE_URL      | JDBC URL to Postgres database                  |
-| PORT              | Port the application will run on.              |
-| PUSHOVER_USER_KEY |                                                |
-| PUSHOVER_API_KEY  |                                                |
+| Name              | Usage                                           |
+| ----------------- | ----------------------------------------------- |
+| BASE_URL          | HTTPS URL of the application                    |
+| PASSPHRASE        | User entered passphrase to protected endpoints  |
+| DATABASE_URL      | JDBC URL to Postgres database                   |
+| PORT              | Port the application will run on.               |
+| PUSHOVER_USER_KEY | User key for [Pushover](https://pushover.net/)  |
+| PUSHOVER_API_KEY  |                                                 |
+| MOVIE_DB_API_KEY  | API key for [TMDB](https://www.themoviedb.org/) |
 
 ## Deployment
 
@@ -102,4 +103,12 @@ git push heroku master
 
 ## Roadmap (TODOs)
 
-- Include original German movies as well
+- Find IMDB id for all movies and use that to save the movie.
+  - Add the :cinema identifier to the screening
+  - This will remove redundancies and enable a nicer looking UI
+  - In case we can't determine a movie: Drop it?
+- Add filter capabilities:
+  - Filter by cinema: Multi-select
+  - Only show Originals
+  - Only show Non-dubbed movies (german and OV)
+- Add more cinemas (Gilching, Seefeld, Gauting)
