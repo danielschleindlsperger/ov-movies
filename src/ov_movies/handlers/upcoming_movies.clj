@@ -27,7 +27,7 @@
                                             [:span "No upcoming movies."]])
             (for [movie upcoming-movies]
               [:section.mt-12
-               [:img {:src (:poster movie) :alt (:title movie) :style "max-width: 300px;"}]
+               [:img {:src (:poster movie) :alt (:title movie) :loading "lazy" :style "max-width: 300px;"}]
                [:h1.mt-6.text-2xl.font-bold (:title movie)]
                [:p.mt-2 (:description movie)]
                [:a.px-4.py-2.mt-4.inline-block.bg-gray-800.text-gray-100.font-semibold.rounded.shadow-md
