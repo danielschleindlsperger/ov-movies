@@ -79,15 +79,16 @@ Postgres
 
 ## Environment Variables
 
-| Name              | Usage                                           |
-| ----------------- | ----------------------------------------------- |
-| BASE_URL          | HTTPS URL of the application                    |
-| PASSPHRASE        | User entered passphrase to protected endpoints  |
-| DATABASE_URL      | JDBC URL to Postgres database                   |
-| PORT              | Port the application will run on.               |
-| PUSHOVER_USER_KEY | User key for [Pushover](https://pushover.net/)  |
-| PUSHOVER_API_KEY  |                                                 |
-| MOVIE_DB_API_KEY  | API key for [TMDB](https://www.themoviedb.org/) |
+| Name              | Usage                                                      |
+| ----------------- | ---------------------------------------------------------- |
+| ENV               | The environment the app is running under. "dev" or "prod". |
+| BASE_URL          | HTTPS URL of the application                               |
+| PASSPHRASE        | User entered passphrase to protected endpoints             |
+| DATABASE_URL      | JDBC URL to Postgres database                              |
+| PORT              | Port the application will run on.                          |
+| PUSHOVER_USER_KEY | User key for [Pushover](https://pushover.net/)             |
+| PUSHOVER_API_KEY  |                                                            |
+| MOVIE_DB_API_KEY  | API key for [TMDB](https://www.themoviedb.org/)            |
 
 ## Deployment
 
