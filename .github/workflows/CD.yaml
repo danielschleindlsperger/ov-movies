@@ -37,7 +37,7 @@ jobs:
 
   # Deploy job only runs on master after containers are built successful
   migrate-and-deploy:
-    name: Migrate database and deploy application
+    name: Deploy application
     runs-on: ubuntu-latest
     needs: build-and-push-container
     if: github.ref == 'refs/heads/master'
