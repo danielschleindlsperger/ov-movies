@@ -1,9 +1,10 @@
 (ns ov-movies.database
-  (:require [next.jdbc.result-set :as result-set]
+  (:require [clojure.data.json :as json]
+            [next.jdbc.result-set :as result-set]
             [next.jdbc.prepare :as prepare]
-            [clojure.data.json :as json]
-            [camel-snake-kebab.core :refer [->kebab-case-keyword ->snake_case_string]]
             [next.jdbc.date-time :as date-time]
+            [migratus.core :as migratus]
+            [camel-snake-kebab.core :refer [->kebab-case-keyword ->snake_case_string]]
             [ov-movies.config :refer [config]])
   (:import [org.postgresql.util PGobject]
            [java.sql PreparedStatement]))
@@ -25,6 +26,12 @@
 ; In the future we can use a connection pool here.
 ; For now we just return the database uri that can be passed to jdbc as is.
 (def db (-> config :database :connection-uri))
+
+(defn migrate! []
+  (migratus/migrate {:store                :database
+                     :migration-dir        "migrations/"
+                     :migration-table-name "schema_migrations"
+                     :db db}))
 
 (def ->json json/write-str)
 (def <-json #(json/read-str % :key-fn ->kebab-case-keyword))
