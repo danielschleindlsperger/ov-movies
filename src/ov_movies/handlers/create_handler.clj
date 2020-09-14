@@ -62,5 +62,5 @@
                                                     :handler    crawl-handler}}]
                                    ["/blacklist/:id" {:get {:middleware [[wrap-basic-auth (:passphrase config)] [wrap-db db]]
                                                             :handler    blacklist-movie-handler}}]
-                                   ["/" {:get {:middleware [[wrap-db db]]
+                                   ["/" {:get {:middleware [[params/wrap-params] [wrap-db db]]
                                                :handler    upcoming-movies-handler}}]])))

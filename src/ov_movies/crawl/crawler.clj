@@ -14,8 +14,8 @@
         screenings (map #(assoc % :movie-id id) (:screenings movie))]
     (assoc movie :original-lang original-lang :id id :screenings screenings)))
 
-(def ^:private cinemas [[:cineplex-germering cineplex-germering/scrape!]
-                        [:cineplex-neufahrn cineplex-neufahrn/scrape!]])
+(def cinemas [[:cineplex-germering cineplex-germering/scrape!]
+              [:cineplex-neufahrn cineplex-neufahrn/scrape!]])
 
 (defn crawl! [db movie-db-api-key]
   (let [movies (->> cinemas
