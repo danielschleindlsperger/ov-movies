@@ -1,6 +1,6 @@
 (ns ov-movies.util-test
   (:require [clojure.test :refer :all]
-            [ov-movies.util :refer :all])
+            [ov-movies.util :refer [parse-date]])
   (:import [java.time ZoneId LocalDateTime]))
 
 (deftest test-parse-date
@@ -12,5 +12,4 @@
       (is (= 2020 (.getYear parsed)))
       (is (= 1 (.getMonthValue parsed)))
       (is (= 1 (.getDayOfMonth parsed)))
-      (is (= 20 (.getHour parsed)))
-      (is (= paris-offset (.getOffset parsed))))))
+      (is (= 20 (.getHour parsed))))))
