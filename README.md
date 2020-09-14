@@ -111,4 +111,5 @@ git push heroku master
   - Filter by cinema: Multi-select
   - Only show Originals
   - Only show Non-dubbed movies (german and OV)
-- Add more cinemas (Gilching, Seefeld, Gauting)
+- Add more cinemas (Gjkjking, Seefeld, Gauting)
+- Monitoring to detect when a scraper breaks
