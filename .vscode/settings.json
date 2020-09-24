@@ -1,0 +1,22 @@
+{
+  "calva.customREPLCommandSnippets": [
+    {
+      "name": "Reset REPL",
+      "snippet": "(do (require 'dev) (in-ns 'dev) (restart))",
+      "ns": "user",
+      "repl": "clj"
+    }
+  ],
+  "calva.replConnectSequences": [
+    {
+      "name": "ov-movies",
+      "projectType": "Leiningen",
+      "cljsType": "none",
+      "afterCLJReplJackInCode": "(dev)",
+      "menuSelections": {
+        "leinProfiles": ["dev", "repl"],
+        "leinAlias": null
+      }
+    }
+  ]
+}

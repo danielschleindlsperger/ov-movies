@@ -11,10 +11,15 @@ pom.xml.asc
 .hgignore
 .hg/
 .idea
-.calva
 /logs
 /.dir-locals.el
 /profiles.clj
 /dev/resources/local.edn
 /dev/resources/secrets.edn
 /dev/src/local.clj
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.calva/
