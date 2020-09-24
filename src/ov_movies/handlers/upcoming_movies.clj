@@ -4,6 +4,7 @@
             [ov-movies.config :refer [config]]
             [ov-movies.util :refer [format-date]]
             [ov-movies.movie :refer [get-movies-with-upcoming-screenings]]
+            [ov-movies.assets :refer [assets]]
             [ov-movies.handlers.util :refer [ok]]
             [ov-movies.crawl.crawler :refer [cinemas]])
   (:import [java.net URLEncoder]
@@ -38,6 +39,10 @@
      [:label
       [:input.mr-2 {:type "radio" :name name :value value :checked (= value selected-value)} display-name]])])
 
+(def ^:private caret
+  [:svg.w-6.h-6 {:viewbox "0 0 16 16", :class "bi bi-caret-down-fill", :fill "currentColor", :xmlns "http://www.w3.org/2000/svg"}
+   [:path {:d "M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"}]])
+
 (def ^:private default-form-state {"language" "non-dubbed"
                                    "cinema" (map (comp name first) cinemas)})
 
@@ -57,7 +62,8 @@
 
 (defn- filter-form [form-state]
   [:section.flex.justify-center.top-0.left-0.w-screen.sticky.bg-white.mt-4.p-4.shadow-lg
-   {:style "margin-left: -50vw; margin-right: -50vw;"}
+   {:style "margin-left: -50vw; margin-right: -50vw;"
+    :data-filter-form ""}
    [:form.md:flex.md:justify-between.w-full.max-w-4xl
     (checkbox-multi-select "cinema" cinema-options (get form-state "cinema"))
     (radio-multi-select "language" language-options (get form-state "language"))
@@ -73,9 +79,13 @@
           [:meta {:charset "UTF-8"}]
           [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
           [:link {:href "https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" :rel "stylesheet"}]]
+         [:script (:js assets)]
          [:body
           [:main.max-w-2xl.p-4.mx-auto
            [:h1.text-4xl.text-center.font-bold "Upcoming Movies"]
+           [:div.flex.justify-center
+            [:button.p-4.transition-transform.origin-center.transform.duration-200
+             {:data-mobile-form-toggle "" :aria-label "Toggle movie filter form"} caret]]
            (filter-form form-state)
            [:div.mt-12
             (when (empty? upcoming-movies) [:section.mt-12.flex.justify-center
