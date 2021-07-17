@@ -31,8 +31,9 @@
   (fn [req]
     (handler (assoc req :passphrase passphrase))))
 
-(defn decode-base64 [s]
+(defn decode-base64 [^String s]
   (String. (.decode (Base64/getDecoder) s)))
+
 (defn parse-password [auth-header]
   (when (string? auth-header)
     (-> auth-header
@@ -40,6 +41,7 @@
         (decode-base64)
         (str/split #":")
         (nth 1 nil))))
+
 (defn wrap-basic-auth [handler password]
   {:pre [(not (str/blank? password))]}
   (fn [req]
@@ -60,7 +62,9 @@
                                                                  [wrap-message-sender config]
                                                                  [wrap-movie-db config]]
                                                     :handler    crawl-handler}}]
-                                   ["/blacklist/:id" {:get {:middleware [[wrap-basic-auth (:passphrase config)] [wrap-db db]]
+                                   ["/blacklist/:id" {:get {:middleware [[wrap-basic-auth (:passphrase config)]
+                                                                         [wrap-db db]]
                                                             :handler    blacklist-movie-handler}}]
-                                   ["/" {:get {:middleware [[params/wrap-params] [wrap-db db]]
+                                   ["/" {:get {:middleware [[params/wrap-params]
+                                                            [wrap-db db]]
                                                :handler    upcoming-movies-handler}}]])))

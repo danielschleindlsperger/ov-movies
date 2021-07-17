@@ -20,18 +20,26 @@
   (result-set/as-unqualified-modified-maps rs (assoc opts :qualifier-fn ->kebab-case-keyword :label-fn ->kebab-case-keyword)))
 
 (def db-opts {:builder-fn as-unqualified-kebab-maps
-              :table-fn ->snake_case_string
-              :column-fn ->snake_case_string})
+              :table-fn   ->snake_case_string
+              :column-fn  ->snake_case_string})
 
 ; In the future we can use a connection pool here.
 ; For now we just return the database uri that can be passed to jdbc as is.
 (def db (-> config :database :connection-uri))
+(defn- migratus-config []
+  {:store                :database
+   :migration-dir        "migrations/"
+   :migration-table-name "schema_migrations"
+   :db                   db})
 
 (defn migrate! []
-  (migratus/migrate {:store                :database
-                     :migration-dir        "migrations/"
-                     :migration-table-name "schema_migrations"
-                     :db db}))
+  (migratus/migrate (migratus-config)))
+
+(defn rollback! []
+  (migratus/rollback (migratus-config)))
+
+(defn create-migration! [name]
+  (migratus/create (migratus-config) name))
 
 (def ->json json/write-str)
 (def <-json #(json/read-str % :key-fn ->kebab-case-keyword))
@@ -50,7 +58,7 @@
   "Transform PGobject containing `json` or `jsonb` value to Clojure
   data."
   [^PGobject v]
-  (let [type  (.getType v)
+  (let [type (.getType v)
         value (.getValue v)]
     (if (#{"jsonb" "json"} type)
       (with-meta (<-json value) {:pgtype type})

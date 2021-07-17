@@ -10,7 +10,9 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
+.cpcache
 .idea
+ov-movies.iml
 /logs
 /.dir-locals.el
 /profiles.clj

@@ -1,8 +1,6 @@
 name: CD
 
-on: [push, pull_request]
-
-# TODO: run tests
+on: [ push, pull_request ]
 
 env:
   REGISTRY: 'rg.nl-ams.scw.cloud'
@@ -13,16 +11,25 @@ jobs:
     name: Build and push container
     runs-on: ubuntu-latest
     steps:
+      - name: Setup clj-kondo
+        uses: DeLaGuardo/setup-clj-kondo@afc83dbbf4e7e32e04649e29dbf30668d30e9e3e
+        with:
+          version: '2021.06.18'
+      - name: Prepare java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 14
+      - name: Install clojure tools
+        uses: DeLaGuardo/setup-clojure@3.4
+        with:
+          # Install just one or all simultaneously
+          cli: 1.10.3.822
       - name: Checkout source
         uses: actions/checkout@v1
-      - name: Install dependencies
-        run: lein deps
       - name: Run tests
-        run: lein test
-      - name: Lint with kibit
-        run: lein kibit
+        run: ./bin/kaocha
       - name: Lint with clj-kondo
-        run: lein clj-kondo --lint src
+        run: clj-kondo --lint src
       - name: Determine version
         id: version
         uses: ./.github/actions/version-commit

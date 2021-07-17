@@ -4,20 +4,22 @@ Simple application to crawl the website of my local theatres and send me updates
 
 ## How it works
 
-The application will scrape the cinemas' websites in an interval (a few days).
-It will then persist any entries that were not previously scraped in a database and notify me via email about these new entries.
+The application will scrape the cinemas' websites in an interval (a few days). It will then persist any entries that
+were not previously scraped in a database and notify me via email about these new entries.
 
 ## Helpful Commands
 
 ```bash
-$ lein repl :headless # start leiningen repl in headless mode to connect to (e.g. from Cursive)
+# Run tests
+./bin/kaocha
+./bin/kaocha --watch
+```
 
-(dev) # switch to dev namespace
-(dev/restart) # restart web server
+### REPL
 
-$ lein kibit --replace --interactive # run kibit with interactive autofixer
-
-$lein clj-kondo --lint src # run clj-kondo linter
+```clojure
+(dev) ; switch to dev namespace
+(dev/restart) ; restart web server
 ```
 
 ## Architecture
@@ -71,11 +73,14 @@ Postgres
 
 ### Migrations
 
-`lein migratus create`
+We have a few helper functions available to create, rollback and execute migrations from the REPL.
+Additionally the migrations will be executed on application startup.
 
-`lein migratus migrate`
-
-`lein migratus rollback`
+```clojure
+(ov-movies.database/migrate!)
+(ov-movies.database/rollback!)
+(ov-movies.database/create-migration! "create-my-new-table")
+```
 
 ## Environment Variables
 
