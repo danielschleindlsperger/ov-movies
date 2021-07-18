@@ -48,8 +48,7 @@
                :id          (java.util.UUID/randomUUID)
                :original?   (original? screening)}))
        (group-by :movie-id)
-       (map (fn [[_ screenings-for-movie]] (combine-screenings screenings-for-movie))))
-  )
+       (map (fn [[_ screenings-for-movie]] (combine-screenings screenings-for-movie)))))
 
 (defn parse-movies [overview-html]
   (let [overview-htree (-> overview-html parse as-hickory)
