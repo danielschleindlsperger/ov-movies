@@ -4,8 +4,7 @@
     [clojure.set :as set]
     [hickory.core :refer [parse, as-hickory]]
     [hickory.select :as sel]
-    [clojure.data.json :as json]
-    [ov-movies.util :as u :refer [parse-date hick-inner-text]])
+    [clojure.data.json :as json])
   (:import (java.time Instant)))
 
 (def base-url "https://cadillac.movieplace.de")
@@ -27,13 +26,11 @@
 
 (defn- combine-screenings [screenings]
   (reduce (fn [movie screening]
-            (merge movie {:id          (or (:movie-id movie) (:movie-id screening))
-                          :title       (or (:movie-title movie) (:movie-title screening))
-                          :description (or (:description movie) (:description screening))
-                          :poster      (or (:poster movie) (:poster screening))
-                          :screenings  (conj (:screenings movie) {:id        (:id screening)
-                                                                  :date      (:date screening)
-                                                                  :original? (:original? screening)})}))
+            (merge movie {:id         (or (:movie-id movie) (:movie-id screening))
+                          :title      (or (:movie-title movie) (:movie-title screening))
+                          :screenings (conj (:screenings movie) {:id        (:id screening)
+                                                                 :date      (:date screening)
+                                                                 :original? (:original? screening)})}))
           {:screenings []}
           screenings))
 
@@ -42,8 +39,6 @@
        (map (fn [screening]
               {:movie-id    (get-in screening [:workPresented (keyword "@id")])
                :movie-title (parse-movie-name screening)
-               :description (get-in screening [:workPresented :description])
-               :poster      (get-in screening [:image])
                :date        (Instant/parse (:startDate screening))
                :id          (java.util.UUID/randomUUID)
                :original?   (original? screening)}))
@@ -63,6 +58,6 @@
 
 (comment
   (def html (slurp overview-url))
-  (clojure.pprint/pprint (parse-movies html))
+  (parse-movies html)
   (time (scrape!))
   (filter #(some :original? (:screenings %)) (scrape!)))

@@ -34,24 +34,6 @@
         title (hick-inner-text h1)]
     title))
 
-(defn- parse-movie-description
-  "Takes a web page as a hickory data structure and parses the movie's description."
-  [hick]
-  (let [node (first (sel/select (sel/class "movie-schedule--description-text") hick))
-        description (hick-inner-text node)]
-    description))
-
-(defn- parse-movie-poster
-  "Takes a web page as a hickory data structure and parses the movie's poster image url."
-  [hick]
-  (-> (sel/select (sel/descendant (sel/class "movie-poster") (sel/tag :img)) hick)
-      first :attrs :src))
-
-(defn parse-screening-id
-  "Takes a URL to a booking page of a screening and extracts the cineplex id from it."
-  [url]
-  (when url (last (re-find #"performance/(.*)/mode/sale" url))))
-
 (defn original?
   "Determines if the given show is to an original showing."
   [show]
@@ -63,16 +45,13 @@
   [show]
   (let [time-el (first (sel/select (sel/tag :time) show))
         date (-> time-el :attrs :datetime)
-        time (-> time-el :content first str/trim (str/replace #":" "-"))
-        url (-> show :attrs :href)]
+        time (-> time-el :content first str/trim (str/replace #":" "-"))]
     {:date      (parse-date (str date "-" time))
-     :id        (parse-screening-id url)
      :original? (original? show)}))
 
 (defn- parse-screenings
   "Takes a web page as a hickory data structure and parses the movie's screening dates.
    A screening has the following structure:
-   :id
    :date
    :original"
   [hick]
@@ -83,11 +62,9 @@
   "Takes the HTML of a movie page and returns a parsed movie with :title :poster and a vector of :original-dates"
   [html]
   (let [hick-html (-> html parse as-hickory)]
-    {:id          (parse-movie-id hick-html)
-     :title       (parse-movie-title hick-html)
-     :description (parse-movie-description hick-html)
-     :poster      (parse-movie-poster hick-html)
-     :screenings  (parse-screenings hick-html)}))
+    {:id         (parse-movie-id hick-html)
+     :title      (parse-movie-title hick-html)
+     :screenings (parse-screenings hick-html)}))
 
 (defn- fetch-detail-page [rel-url] (slurp (str base-url rel-url)))
 
