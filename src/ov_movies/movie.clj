@@ -45,6 +45,7 @@
   (jdbc/with-transaction [tx db]
     (let [upcoming-screenings (jdbc/execute! tx (sql-format {:select [:*]
                                                              :from [:screenings]
+                                                             :order-by [[:date :asc]]
                                                              :where [:> :date (raw "now()")]}) db-opts)
           upcoming-movies (if (empty? upcoming-screenings)
                             []
