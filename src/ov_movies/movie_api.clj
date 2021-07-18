@@ -22,4 +22,5 @@
 
 (comment
   (def api-key (get-in (var-get (requiring-resolve 'ov-movies.config/config)) [:movie-db :api-key]))
-  (search-movie api-key "pumuckl"))
+  (search-movie api-key "pumuckl")
+  (search-movie api-key "Nomadland"))

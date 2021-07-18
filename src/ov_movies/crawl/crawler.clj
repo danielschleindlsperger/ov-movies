@@ -4,6 +4,7 @@
             [ov-movies.screening :refer [insert-screenings!]]
             [ov-movies.crawl.scrapers.cineplex-neufahrn :as cineplex-neufahrn]
             [ov-movies.crawl.scrapers.cineplex-germering :as cineplex-germering]
+            [ov-movies.crawl.scrapers.cadillac-veranda :as cadillac-veranda]
             [ov-movies.movie-api :as movie-api]
             [taoensso.timbre :as log]))
 
@@ -15,7 +16,8 @@
     (assoc movie :original-lang original-lang :id id :screenings screenings)))
 
 (def cinemas [[:cineplex-germering cineplex-germering/scrape!]
-              [:cineplex-neufahrn cineplex-neufahrn/scrape!]])
+              [:cineplex-neufahrn cineplex-neufahrn/scrape!]
+              [:cadillac-veranda cadillac-veranda/scrape!]])
 
 (defn crawl! [db movie-db-api-key]
   (let [movies (->> cinemas

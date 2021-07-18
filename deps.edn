@@ -22,8 +22,7 @@
            ring/ring-defaults                  {:mvn/version "0.3.3"}
 
            ;; JSON
-           ;metosin/jsonista                    {:mvn/version "0.3.1"}
-           org.clojure/data.json               {:mvn/version "0.2.7"}
+           org.clojure/data.json               {:mvn/version "2.4.0"}
            camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"}
 
            ;; HTML

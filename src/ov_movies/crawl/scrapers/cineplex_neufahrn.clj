@@ -1,9 +1,9 @@
 (ns ov-movies.crawl.scrapers.cineplex-neufahrn
   (:require
-   [clojure.string :as str]
-   [hickory.core :refer [parse, as-hickory]]
-   [hickory.select :as sel]
-   [ov-movies.util :as u :refer [parse-date hick-inner-text]]))
+    [clojure.string :as str]
+    [hickory.core :refer [parse, as-hickory]]
+    [hickory.select :as sel]
+    [ov-movies.util :as u :refer [parse-date hick-inner-text]]))
 
 (def base-url "https://www.cineplex.de")
 (def overview-url (str base-url "/programm/neufahrn/"))
@@ -65,8 +65,8 @@
         date (-> time-el :attrs :datetime)
         time (-> time-el :content first str/trim (str/replace #":" "-"))
         url (-> show :attrs :href)]
-    {:date (parse-date (str date "-" time))
-     :id   (parse-screening-id url)
+    {:date      (parse-date (str date "-" time))
+     :id        (parse-screening-id url)
      :original? (original? show)}))
 
 (defn- parse-screenings
@@ -83,11 +83,11 @@
   "Takes the HTML of a movie page and returns a parsed movie with :title :poster and a vector of :original-dates"
   [html]
   (let [hick-html (-> html parse as-hickory)]
-    {:id             (parse-movie-id hick-html)
-     :title          (parse-movie-title hick-html)
-     :description    (parse-movie-description hick-html)
-     :poster         (parse-movie-poster hick-html)
-     :screenings (parse-screenings hick-html)}))
+    {:id          (parse-movie-id hick-html)
+     :title       (parse-movie-title hick-html)
+     :description (parse-movie-description hick-html)
+     :poster      (parse-movie-poster hick-html)
+     :screenings  (parse-screenings hick-html)}))
 
 (defn- fetch-detail-page [rel-url] (slurp (str base-url rel-url)))
 

@@ -16,7 +16,8 @@
 
 (defn query [stmt] (jdbc/execute! database/db [stmt]))
 
-(defn http [url] @(request {:url url}) 10000 "Timed out after 10000ms")
+(defn http [url]
+  @(request {:url url}) 10000 "Timed out after 10000ms")
 
 ;; run once initially when jacking-in
 (restart)
