@@ -5,6 +5,7 @@
             [ov-movies.crawl.scrapers.cineplex-neufahrn :as cineplex-neufahrn]
             [ov-movies.crawl.scrapers.cineplex-germering :as cineplex-germering]
             [ov-movies.crawl.scrapers.cadillac-veranda :as cadillac-veranda]
+            [ov-movies.crawl.scrapers.rio-filmpalast :as rio-filmpalast]
             [ov-movies.movie-api :as movie-api]))
 
 (defn- add-movie-metadata [api-key movie]
@@ -21,7 +22,8 @@
 
 (def cinemas [[:cineplex-germering cineplex-germering/scrape!]
               [:cineplex-neufahrn cineplex-neufahrn/scrape!]
-              [:cadillac-veranda cadillac-veranda/scrape!]])
+              [:cadillac-veranda cadillac-veranda/scrape!]
+              [:rio-filmpalast rio-filmpalast/scrape!]])
 
 (defn- add-cinema [movie cinema]
   (update movie :screenings (fn [screenings]
@@ -63,5 +65,4 @@
   (def config (var-get (requiring-resolve 'ov-movies.config/config)))
   (def ds (get-in config [:database :connection-uri]))
   (def movie-db-api-key (get-in config [:movie-db :api-key]))
-  (try (time (crawl! ds movie-db-api-key))
-       (catch Exception e (println e))))
+  (crawl! ds movie-db-api-key))
