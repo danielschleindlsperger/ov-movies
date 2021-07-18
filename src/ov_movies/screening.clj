@@ -10,11 +10,11 @@
 
 
 (s/def ::id (s/with-gen (s/and string? #(-> % count (> 2)))
-              #(gen/string-alphanumeric)))
+                        #(gen/string-alphanumeric)))
 
 (s/def ::date (s/with-gen #(= (type %) OffsetDateTime)
                           ;; TODO: generate, don't use "now()"
-                #(gen/fmap (fn [_] (.toOffsetDateTime (ZonedDateTime/now))) (s/gen any?))))
+                          #(gen/fmap (fn [_] (.toOffsetDateTime (ZonedDateTime/now))) (s/gen any?))))
 
 (s/def ::movie_id (s/and string? #(-> % count (> 2))))
 
@@ -24,10 +24,16 @@
 (defn insert-screenings-query [screenings]
   (sql/format {:insert-into :screenings
                :values      screenings
-               :on-conflict [:id]
-               :do-nothing  []
                :returning   [:*]}
               :quoting :ansi))
 
 (defn insert-screenings! [db screenings]
-  (jdbc/execute! db (insert-screenings-query screenings) db-opts))
+  (jdbc/execute! db
+                 (insert-screenings-query (map #(select-keys % [:movie-id :date :cinema :original?]) screenings))
+                 db-opts))
+
+(defn remove-screenings-for-movies! [db movie-ids]
+  (let [stmt (sql/format {:delete-from :screenings
+                          :where       [:in :movie-id movie-ids]})]
+    (jdbc/execute! db stmt))
+  )

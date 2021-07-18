@@ -41,6 +41,9 @@
 (defn create-migration! [name]
   (migratus/create (migratus-config) name))
 
+(defn reset-migrations! []
+  (migratus/reset (migratus-config)))
+
 (def ->json json/write-str)
 (def <-json #(json/read-str % :key-fn ->kebab-case-keyword))
 
