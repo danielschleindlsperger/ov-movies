@@ -1,10 +1,5 @@
 (ns ov-movies.crawl.scrapers.rio-filmpalast
-  (:require
-    [clojure.string :as str]
-    [clojure.set :as set]
-    [hickory.core :refer [parse, as-hickory]]
-    [hickory.select :as sel]
-    [clojure.data.json :as json])
+  (:require [clojure.data.json :as json])
   (:import (java.time Instant)))
 
 ;; Rio Filmpalast uses kinoheld as a service provider which has a publicly accessible api

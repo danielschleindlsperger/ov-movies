@@ -8,6 +8,7 @@
 (defn search-movie
   "Search for a movie by its title. Returns a single movie or `nil`."
   [api-key query]
+  {:pre [some? query]}
   (let [url (str base-url "/search/movie")
         query-params {"api_key" api-key
                       "query" query}
