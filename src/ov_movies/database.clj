@@ -49,6 +49,12 @@
 
 (defn reset-migrations! [] (migratus/reset (migratus-config)))
 
+(comment
+  (migrate!)
+  (rollback!)
+  (create-migration! "my foobar migration")
+  (reset-migrations!))
+
 (def ->json json/write-str)
 (def <-json #(json/read-str % :key-fn ->kebab-case-keyword))
 
