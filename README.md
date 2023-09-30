@@ -106,7 +106,11 @@ The application is deployed continuously on every successful `master` build.
 We're using [antq](https://github.com/liquidz/antq) to find outdated dependencies.
 
 ``` bash
+# List outdated dependencies
 clojure -M:outdated
+
+# Upgrade interactively
+clojure -M:outdated --upgrade
 ```
 
 ## Roadmap (TODOs)
