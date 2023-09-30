@@ -26,3 +26,4 @@ ov-movies.iml
 !.vscode/extensions.json
 .calva/
 .clj-kondo/
+.lsp/
