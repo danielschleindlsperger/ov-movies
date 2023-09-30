@@ -99,6 +99,16 @@ Additionally the migrations will be executed on application startup.
 
 The application is deployed continuously on every successful `master` build.
 
+## Dependencies
+
+### Finding outdated dependencies
+
+We're using [antq](https://github.com/liquidz/antq) to find outdated dependencies.
+
+``` bash
+clojure -M:outdated
+```
+
 ## Roadmap (TODOs)
 
 - Add more cinemas (Gilching, Seefeld, Gauting)

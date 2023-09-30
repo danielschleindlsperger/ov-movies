@@ -1,68 +1,56 @@
-{:deps    {org.clojure/clojure                 {:mvn/version "1.10.3"}
-
-           ;; logging
-           com.taoensso/timbre                 {:mvn/version "5.1.2"}
-           com.fzakaria/slf4j-timbre           {:mvn/version "0.3.21"}
-
-           ;; system/config management
-           ;integrant/integrant                 {:mvn/version "0.8.0"}
-           ;integrant/repl                      {:mvn/version "0.3.2"}
-           aero/aero                           {:mvn/version "1.1.6"}
-
-           ;; HTTP
-           http-kit/http-kit                   {:mvn/version "2.5.3"}
-           clj-http/clj-http                   {:mvn/version "3.10.2"}
-           metosin/reitit                      {:mvn/version "0.5.12"}
-           metosin/reitit-ring                 {:mvn/version "0.5.12"}
-
-
-
-           ring/ring-core                      {:mvn/version "1.9.2"}
-           ring/ring-headers                   {:mvn/version "0.3.0"}
-           ring/ring-defaults                  {:mvn/version "0.3.3"}
-
-           ;; JSON
-           org.clojure/data.json               {:mvn/version "2.4.0"}
-           camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"}
-
-           ;; HTML
-           hiccup/hiccup                       {:mvn/version "1.0.5"}
-           hickory/hickory                     {:mvn/version "0.7.1"}
-
-           ;; Database
-           seancorfield/next.jdbc              {:mvn/version "1.1.588"}
-           org.postgresql/postgresql           {:mvn/version "42.2.16"}
-           honeysql/honeysql                   {:mvn/version "1.0.444"}
-           nilenso/honeysql-postgres           {:mvn/version "0.2.6"}
-           migratus/migratus                   {:mvn/version "1.2.7"}
-
-           ;; validation/modelling
-           ;metosin/malli                       {:mvn/version "0.4.0"}
-
-           ;; testing
-           com.gfredericks/test.chuck          {:mvn/version "0.2.10"}
-           org.clojure/test.check              {:mvn/version "0.9.0"}
-
-           ;; async
-           ;funcool/promesa                     {:mvn/version "6.0.0"}
-
-
-
-           ;; linting
-           clj-kondo/clj-kondo                 {:mvn/version "2021.06.18"}
-           }
- :paths   ["src" "resources"]
- :aliases {:run-m     {:main-opts ["-m" "ov-movies.main"]}
-           :dev       {:extra-paths ["dev/src" "dev/resources" "test"]}
-           :test      {:extra-paths ["test"]
-                       :extra-deps  {lambdaisland/kaocha           {:mvn/version "1.0.861"}
-                                     lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"}
-                                     org.clojure/test.check        {:mvn/version "1.1.0"}
-                                     ring/ring-mock                {:mvn/version "0.4.0"}
-                                     http-kit.fake/http-kit.fake   {:mvn/version "0.2.2"}}}
-           :clj-kondo {:main-opts ["-m" "clj-kondo.main"]}
-           :uberjar   {:replace-deps {com.github.seancorfield/depstar {:mvn/version "2.0.211"}}
-                       :exec-fn      hf.depstar/uberjar
-                       :exec-args    {:aot        true
-                                      :jar        "target/ov-movies.jar"
-                                      :main-class "ov-movies.main"}}}}
+{:aliases {:clj-kondo {:main-opts ["-m" "clj-kondo.main"]},
+           :dev {:extra-paths ["dev/src" "dev/resources" "test"]},
+           :outdated {:deps {com.github.liquidz/antq {:mvn/version "RELEASE"}},
+                      :main-opts ["-m" "antq.core"]},
+           :run-m {:main-opts ["-m" "ov-movies.main"]},
+           :test {:extra-deps
+                    {http-kit.fake/http-kit.fake {:mvn/version "0.2.2"},
+                     lambdaisland/kaocha {:mvn/version "1.0.861"},
+                     lambdaisland/kaocha-cloverage {:mvn/version "1.0.75"},
+                     org.clojure/test.check {:mvn/version "1.1.0"},
+                     ring/ring-mock {:mvn/version "0.4.0"}},
+                  :extra-paths ["test"]},
+           :uberjar {:exec-args {:aot true,
+                                 :jar "target/ov-movies.jar",
+                                 :main-class "ov-movies.main"},
+                     :exec-fn hf.depstar/uberjar,
+                     :replace-deps {com.github.seancorfield/depstar
+                                      {:mvn/version "2.0.211"}}}},
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"},
+        ;; logging
+        com.taoensso/timbre {:mvn/version "5.1.2"},
+        com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"},
+        ;; system/config management
+        ;integrant/integrant                 {:mvn/version "0.8.0"}
+        ;integrant/repl                      {:mvn/version "0.3.2"}
+        aero/aero {:mvn/version "1.1.6"},
+        ;; HTTP
+        http-kit/http-kit {:mvn/version "2.5.3"},
+        clj-http/clj-http {:mvn/version "3.10.2"},
+        metosin/reitit {:mvn/version "0.5.12"},
+        metosin/reitit-ring {:mvn/version "0.5.12"},
+        ring/ring-core {:mvn/version "1.9.2"},
+        ring/ring-headers {:mvn/version "0.3.0"},
+        ring/ring-defaults {:mvn/version "0.3.3"},
+        ;; JSON
+        org.clojure/data.json {:mvn/version "2.4.0"},
+        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"},
+        ;; HTML
+        hiccup/hiccup {:mvn/version "1.0.5"},
+        hickory/hickory {:mvn/version "0.7.1"},
+        ;; Database
+        seancorfield/next.jdbc {:mvn/version "1.1.588"},
+        org.postgresql/postgresql {:mvn/version "42.2.16"},
+        honeysql/honeysql {:mvn/version "1.0.444"},
+        nilenso/honeysql-postgres {:mvn/version "0.2.6"},
+        migratus/migratus {:mvn/version "1.2.7"},
+        ;; validation/modelling
+        ;metosin/malli                       {:mvn/version "0.4.0"}
+        ;; testing
+        com.gfredericks/test.chuck {:mvn/version "0.2.10"},
+        org.clojure/test.check {:mvn/version "0.9.0"},
+        ;; async
+        ;funcool/promesa                     {:mvn/version "6.0.0"}
+        ;; linting
+        clj-kondo/clj-kondo {:mvn/version "2021.06.18"}},
+ :paths ["src" "resources"]}
