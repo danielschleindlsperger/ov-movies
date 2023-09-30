@@ -7,17 +7,16 @@
             [ov-movies.crawl.crawler :as crawler]
             [ov-movies.web-server :refer [restart-server]]))
 
-(defn restart []
-  (restart-server))
+(defn restart [] (restart-server))
 
-(defn crawl! []
+(defn crawl!
+  []
   (let [movie-db-api-key (get-in config [:movie-db :api-key])]
     (crawler/crawl! database/db movie-db-api-key)))
 
 (defn query [stmt] (jdbc/execute! database/db [stmt]))
 
-(defn http [url]
-  @(request {:url url}) 10000 "Timed out after 10000ms")
+(defn http [url] @(request {:url url}) 10000 "Timed out after 10000ms")
 
 ;; run once initially when jacking-in
 (restart)
