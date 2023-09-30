@@ -25,3 +25,4 @@ ov-movies.iml
 !.vscode/launch.json
 !.vscode/extensions.json
 .calva/
+.clj-kondo/
