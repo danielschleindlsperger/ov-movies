@@ -8,3 +8,9 @@ services:
       - POSTGRES_DB=ov_movies
     ports:
       - '5432:5432'
+  web:
+    image: ov-movies/web
+    build: .
+    env_file: ".env"
+    ports:
+      - '3000:3000'

@@ -27,3 +27,4 @@ ov-movies.iml
 .calva/
 .clj-kondo/
 .lsp/
+.env
