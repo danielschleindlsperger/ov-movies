@@ -30,7 +30,6 @@ The application is split up into two "processes". The crawler and the web app.
 
 - Crawls the cineplex website
 - Stores newly found entries in a database
-- Sends a notification (via [Pushover](https://pushover.net/))
 - Triggered by URL invokation (via [IFTTT](https://ifttt.com/my_applets) Webhook)
 
 ### Web App
@@ -60,7 +59,6 @@ Hides a movie from future notifications.
 
 The external services used:
 
-- [Pushover](https://pushover.net/)
 - [IFTTT](https://ifttt.com/my_applets)
 
 ## Database
@@ -91,8 +89,6 @@ Additionally the migrations will be executed on application startup.
 | PASSPHRASE        | User entered passphrase to protected endpoints             |
 | DATABASE_URL      | JDBC URL to Postgres database                              |
 | PORT              | Port the application will run on.                          |
-| PUSHOVER_USER_KEY | User key for [Pushover](https://pushover.net/)             |
-| PUSHOVER_API_KEY  |                                                            |
 | MOVIE_DB_API_KEY  | API key for [TMDB](https://www.themoviedb.org/)            |
 
 ## Deployment

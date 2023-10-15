@@ -6,26 +6,12 @@
     [ov-movies.database :refer [db]]
     [ov-movies.handlers.crawl :refer [crawl-handler]]
     [ov-movies.handlers.upcoming-movies :refer [upcoming-movies-handler]]
-    [ov-movies.handlers.blacklist-movie :refer [blacklist-movie-handler]]
-    [ov-movies.crawl.notification :refer [send-message send-message-mock]])
+    [ov-movies.handlers.blacklist-movie :refer [blacklist-movie-handler]])
   (:import [java.util Base64]))
 
 ;; Middleware
 
 (defn wrap-db [handler db] (fn [req] (handler (assoc req :db db))))
-
-(defn wrap-message-sender
-  [handler config]
-  (let [api-key (-> config
-                    :pushover
-                    :api-key)
-        user-key (-> config
-                     :pushover
-                     :user-key)
-        send (if (= "dev" (:env config)) send-message-mock send-message)]
-    (fn [req]
-      (handler (assoc req
-                 :send-message (fn [params] (send params api-key user-key)))))))
 
 (defn wrap-movie-db
   [handler config]
@@ -74,8 +60,7 @@
     (ring/router [["/crawl"
                    {:get {:middleware [[params/wrap-params]
                                        [wrap-passphrase (:passphrase config)]
-                                       [wrap-db db] [wrap-message-sender config]
-                                       [wrap-movie-db config]],
+                                       [wrap-db db] [wrap-movie-db config]],
                           :handler crawl-handler}}]
                   ["/blacklist/:id"
                    {:get {:middleware [[wrap-basic-auth (:passphrase config)]

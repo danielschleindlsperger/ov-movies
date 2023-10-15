@@ -8,7 +8,6 @@
  :server
    {:base-url #or [#env BASE_URL "http://localhost:3000"],
     :port #long #or [#env PORT 3000]},
- :pushover {:api-key #env PUSHOVER_API_KEY, :user-key #env PUSHOVER_USER_KEY},
  :passphrase #or [#env PASSPHRASE "hunter2"],
  :movie-db
    {:api-key #or [#env MOVIE_DB_API_KEY #ref [:secrets :movie-db-api-key]]}}
